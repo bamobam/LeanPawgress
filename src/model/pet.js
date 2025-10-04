@@ -14,7 +14,6 @@ class Pet {
     getSpecies() {
         return this.species;
     }
-
     getAge() {
         return this.age;
     }
