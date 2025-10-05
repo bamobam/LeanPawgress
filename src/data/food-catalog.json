@@ -1,0 +1,164 @@
+{
+  "foods": [
+    {
+      "id": "hill-science-diet-adult",
+      "brand": "Hill's Science Diet",
+      "name": "Adult Perfect Weight",
+      "type": "dry",
+      "caloriesPerCup": 304,
+      "description": "Weight management formula for adult dogs"
+    },
+    {
+      "id": "hill-science-diet-puppy",
+      "brand": "Hill's Science Diet",
+      "name": "Puppy Large Breed",
+      "type": "dry",
+      "caloriesPerCup": 364,
+      "description": "Large breed puppy formula"
+    },
+    {
+      "id": "royal-canin-german-shepherd",
+      "brand": "Royal Canin",
+      "name": "German Shepherd Adult",
+      "type": "dry",
+      "caloriesPerCup": 320,
+      "description": "Breed-specific nutrition for German Shepherds"
+    },
+    {
+      "id": "royal-canin-french-bulldog",
+      "brand": "Royal Canin",
+      "name": "French Bulldog Adult",
+      "type": "dry",
+      "caloriesPerCup": 340,
+      "description": "Breed-specific nutrition for French Bulldogs"
+    },
+    {
+      "id": "purina-pro-plan-sport",
+      "brand": "Purina Pro Plan",
+      "name": "Sport Performance 30/20",
+      "type": "dry",
+      "caloriesPerCup": 475,
+      "description": "High-protein formula for active dogs"
+    },
+    {
+      "id": "wellness-core-original",
+      "brand": "Wellness Core",
+      "name": "Original Recipe",
+      "type": "dry",
+      "caloriesPerCup": 390,
+      "description": "Grain-free high-protein formula"
+    },
+    {
+      "id": "blue-buffalo-life-protection",
+      "brand": "Blue Buffalo",
+      "name": "Life Protection Formula",
+      "type": "dry",
+      "caloriesPerCup": 350,
+      "description": "Natural ingredients with real meat"
+    },
+    {
+      "id": "orijen-original",
+      "brand": "Orijen",
+      "name": "Original Recipe",
+      "type": "dry",
+      "caloriesPerCup": 445,
+      "description": "Biologically appropriate raw-inspired"
+    },
+    {
+      "id": "acana-grassland",
+      "brand": "Acana",
+      "name": "Grassland Formula",
+      "type": "dry",
+      "caloriesPerCup": 420,
+      "description": "Free-run poultry and grass-fed lamb"
+    },
+    {
+      "id": "taste-of-the-wild-pacific",
+      "brand": "Taste of the Wild",
+      "name": "Pacific Stream",
+      "type": "dry",
+      "caloriesPerCup": 360,
+      "description": "Grain-free with smoked salmon"
+    },
+    {
+      "id": "hill-science-diet-cat-adult",
+      "brand": "Hill's Science Diet",
+      "name": "Adult Indoor Cat",
+      "type": "dry",
+      "caloriesPerCup": 280,
+      "description": "Indoor cat formula with natural fiber"
+    },
+    {
+      "id": "royal-canin-feline-health",
+      "brand": "Royal Canin",
+      "name": "Feline Health Nutrition",
+      "type": "dry",
+      "caloriesPerCup": 300,
+      "description": "Complete nutrition for adult cats"
+    },
+    {
+      "id": "wellness-core-cat",
+      "brand": "Wellness Core",
+      "name": "Indoor Cat Formula",
+      "type": "dry",
+      "caloriesPerCup": 320,
+      "description": "Grain-free indoor cat formula"
+    },
+    {
+      "id": "blue-buffalo-cat-indoor",
+      "brand": "Blue Buffalo",
+      "name": "Indoor Health Cat",
+      "type": "dry",
+      "caloriesPerCup": 290,
+      "description": "Natural indoor cat nutrition"
+    },
+    {
+      "id": "purina-pro-plan-cat",
+      "brand": "Purina Pro Plan",
+      "name": "Indoor Care",
+      "type": "dry",
+      "caloriesPerCup": 310,
+      "description": "Specialized nutrition for indoor cats"
+    },
+    {
+      "id": "wet-food-fancy-feast",
+      "brand": "Fancy Feast",
+      "name": "Classic Pate",
+      "type": "wet",
+      "caloriesPerCup": 95,
+      "description": "Classic pate wet food for cats"
+    },
+    {
+      "id": "wet-food-friskies",
+      "brand": "Friskies",
+      "name": "Classic Pate",
+      "type": "wet",
+      "caloriesPerCup": 100,
+      "description": "Classic pate wet food"
+    },
+    {
+      "id": "wet-food-wellness-core",
+      "brand": "Wellness Core",
+      "name": "Grain-Free Pate",
+      "type": "wet",
+      "caloriesPerCup": 120,
+      "description": "Grain-free wet food pate"
+    },
+    {
+      "id": "treats-greenies",
+      "brand": "Greenies",
+      "name": "Dental Treats",
+      "type": "treat",
+      "caloriesPerCup": 150,
+      "description": "Dental care treats for dogs"
+    },
+    {
+      "id": "treats-blue-buffalo",
+      "brand": "Blue Buffalo",
+      "name": "Training Treats",
+      "type": "treat",
+      "caloriesPerCup": 200,
+      "description": "Natural training treats"
+    }
+  ]
+}

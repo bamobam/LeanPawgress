@@ -64,7 +64,10 @@ npm run console
 - `setweightgoal <weight>` - Set goal weight
 
 ### Meal Tracking
-- `addmeal <name> <calories>` - Add meal entry
+- `addmeal <name> <calories>` - Add meal entry with manual calories
+- `addfood <food-name> <cups>` - Add food by weight (auto-calculates calories)
+- `searchfood <search-term>` - Search for foods in catalog
+- `listfoods [type]` - List foods by type (dry/wet/treat/all)
 - `meals [date]` - Show meals for specific day
 - `mealshistory [date]` - Show meal entries for specific date
 - `setcaloriegoal <calories>` - Set daily calorie goal
@@ -106,12 +109,21 @@ pet> addweight 44.5 weekly check
    Note: weekly check
    Date: 1/15/2025
 
-pet> addmeal kibble 300
-✅ Added meal: kibble (300 calories)
+pet> searchfood hills
+🔍 Food Search Results for "hills":
+   1. Hill's Science Diet Adult Perfect Weight
+      304 cal/cup - Weight management formula for adult dogs
+   2. Hill's Science Diet Puppy Large Breed
+      364 cal/cup - Large breed puppy formula
+
+pet> addfood hills adult 1.5
+✅ Added food: Hill's Science Diet Adult Perfect Weight (1.5 cups)
+   Calories: 456 (304 per cup)
    Date: 1/15/2025
 
-pet> addmeal chicken 200
-✅ Added meal: chicken (200 calories)
+pet> addfood royal canin 0.5
+✅ Added food: Royal Canin German Shepherd Adult (0.5 cups)
+   Calories: 160 (320 per cup)
    Date: 1/15/2025
 
 pet> status

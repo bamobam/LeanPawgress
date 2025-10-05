@@ -11,14 +11,32 @@ class EnhancedPetConsole {
     this.owners = new Map(); // Store owners by name
     this.currentOwner = null;
     this.currentPet = null;
+    this.foodCatalog = []; // Store food catalog
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
       prompt: 'pet> '
     });
 
+    this.loadFoodCatalog();
     this.setupEventHandlers();
     this.showWelcome();
+  }
+
+  loadFoodCatalog() {
+    try {
+      const catalogPath = path.join(process.cwd(), 'src', 'data', 'food-catalog.json');
+      if (fs.existsSync(catalogPath)) {
+        const data = fs.readFileSync(catalogPath, 'utf8');
+        const catalog = JSON.parse(data);
+        this.foodCatalog = catalog.foods || [];
+        console.log(`📚 Loaded ${this.foodCatalog.length} food items from catalog`);
+      } else {
+        console.log('⚠️ Food catalog not found. Food features will be limited.');
+      }
+    } catch (error) {
+      console.log('⚠️ Failed to load food catalog:', error.message);
+    }
   }
 
   setupEventHandlers() {
@@ -80,6 +98,15 @@ class EnhancedPetConsole {
           break;
         case 'addmeal':
           this.addMeal(args);
+          break;
+        case 'addfood':
+          this.addFood(args);
+          break;
+        case 'searchfood':
+          this.searchFood(args);
+          break;
+        case 'listfoods':
+          this.listFoods(args);
           break;
         case 'setweightgoal':
           this.setGoal(args);
@@ -155,6 +182,9 @@ class EnhancedPetConsole {
     
     console.log('\n🍽️ Meal Tracking:');
     console.log('  addmeal <name> <calories>               - Add meal entry');
+    console.log('  addfood <food-name> <cups>              - Add food by weight (auto-calculates calories)');
+    console.log('  searchfood <search-term>               - Search for foods in catalog');
+    console.log('  listfoods [type]                       - List foods by type (dry/wet/treat/all)');
     console.log('  meals [date]                            - Show meals for day');
     console.log('  mealshistory [date]                     - Show meal entries for specific date');
     console.log('  setcaloriegoal <calories>               - Set daily calorie goal');
@@ -384,6 +414,91 @@ class EnhancedPetConsole {
     const meal = this.currentPet.addMeal(name, calories);
     console.log(`✅ Added meal: ${name} (${calories} calories)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
+  }
+
+  addFood(args) {
+    if (!this.currentPet) {
+      console.log('❌ No pet selected');
+      return;
+    }
+
+    if (args.length < 2) {
+      console.log('❌ Usage: addfood <food-name> <cups>');
+      console.log('   Use "searchfood" to find available foods');
+      return;
+    }
+
+    const foodName = args.slice(0, -1).join(' '); // Everything except last argument
+    const cups = Number(args[args.length - 1]);
+
+    // Search for the food in catalog
+    const food = this.foodCatalog.find(f => 
+      f.name.toLowerCase().includes(foodName.toLowerCase()) ||
+      f.brand.toLowerCase().includes(foodName.toLowerCase())
+    );
+
+    if (!food) {
+      console.log(`❌ Food "${foodName}" not found in catalog`);
+      console.log('   Use "searchfood" to find available foods');
+      return;
+    }
+
+    const calories = Math.round(food.caloriesPerCup * cups);
+    const mealName = `${food.brand} ${food.name} (${cups} cup${cups !== 1 ? 's' : ''})`;
+
+    const meal = this.currentPet.addMeal(mealName, calories);
+    console.log(`✅ Added food: ${mealName}`);
+    console.log(`   Calories: ${calories} (${food.caloriesPerCup} per cup)`);
+    console.log(`   Date: ${meal.date.toLocaleDateString()}`);
+  }
+
+  searchFood(args) {
+    if (args.length < 1) {
+      console.log('❌ Usage: searchfood <search-term>');
+      return;
+    }
+
+    const searchTerm = args.join(' ').toLowerCase();
+    const results = this.foodCatalog.filter(food => 
+      food.name.toLowerCase().includes(searchTerm) ||
+      food.brand.toLowerCase().includes(searchTerm) ||
+      food.description.toLowerCase().includes(searchTerm)
+    );
+
+    if (results.length === 0) {
+      console.log(`📝 No foods found matching "${searchTerm}"`);
+      return;
+    }
+
+    console.log(`\n🔍 Food Search Results for "${searchTerm}":`);
+    results.slice(0, 10).forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.brand} ${food.name}`);
+      console.log(`      ${food.caloriesPerCup} cal/cup - ${food.description}`);
+    });
+
+    if (results.length > 10) {
+      console.log(`   ... and ${results.length - 10} more results`);
+    }
+  }
+
+  listFoods(args) {
+    const type = args[0] || 'all';
+    let foods = this.foodCatalog;
+
+    if (type !== 'all') {
+      foods = this.foodCatalog.filter(food => food.type === type);
+    }
+
+    if (foods.length === 0) {
+      console.log(`📝 No foods found for type: ${type}`);
+      return;
+    }
+
+    console.log(`\n🍽️ Available Foods (${type}):`);
+    foods.forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.brand} ${food.name}`);
+      console.log(`      ${food.caloriesPerCup} cal/cup - ${food.type} food`);
+    });
   }
 
   setGoal(args) {
