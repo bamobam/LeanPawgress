@@ -1,7 +1,8 @@
 {
     "type": "module",
     "scripts": {
-        "test": "vitest run --environment jsdom"
+        "test": "vitest run --environment jsdom",
+        "console": "node src/console/enhanced-pet-console.js"
     },
     "name": "leanpawgress",
     "version": "1.0.0",
