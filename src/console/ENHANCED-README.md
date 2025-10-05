@@ -53,6 +53,7 @@ npm run console
 
 ### Pet Management
 - `createpet <name> [species] [sex] [age] [startWeight]` - Create a new pet
+- `editpet <name> <property> <new-value>` - Edit pet information (name, species, sex, age, photo)
 - `listpets` - List all pets for current owner
 - `selectpet <name>` - Select a pet to work with
 - `currentpet` - Show current pet info
@@ -98,6 +99,10 @@ pet> createpet Buddy dog male 3 45
 ✅ Created pet: Buddy
    Species: dog, Sex: male, Age: 3 years
    Starting weight: 45 lbs
+
+pet> editpet Buddy species cat
+✅ Updated pet "Buddy":
+   species: dog → cat
 
 pet> setweightgoal 40
 ✅ Set goal weight: 40 lbs

@@ -96,6 +96,9 @@ class EnhancedPetConsole {
         case 'createpet':
           this.createPet(args);
           break;
+        case 'editpet':
+          this.editPet(args);
+          break;
         case 'listpets':
           this.listPets();
           break;
@@ -185,6 +188,7 @@ class EnhancedPetConsole {
     
     console.log('\n🐾 Pet Management:');
     console.log('  createpet <name> [species] [sex] [age] [startWeight] - Create a new pet');
+    console.log('  editpet <name> <property> <new-value>   - Edit pet information');
     console.log('  listpets                                - List all pets for current owner');
     console.log('  selectpet <name>                        - Select a pet');
     console.log('  currentpet                              - Show current pet info');
@@ -332,6 +336,101 @@ class EnhancedPetConsole {
     }
   }
 
+  editPet(args) {
+    if (!this.currentOwner) {
+      console.log('❌ No owner selected. Create or select an owner first.');
+      return;
+    }
+
+    if (args.length < 2) {
+      console.log('❌ Usage: editpet <pet-name> <property> <new-value>');
+      console.log('   Properties: name, species, sex, age, photo');
+      console.log('   Examples:');
+      console.log('     editpet Bao species cat');
+      console.log('     editpet Bao sex female');
+      console.log('     editpet Bao age 5');
+      console.log('     editpet Bao name Mochi');
+      console.log('     editpet Bao photo https://example.com/photo.jpg');
+      return;
+    }
+
+    const petName = args[0];
+    const property = args[1].toLowerCase();
+    const newValue = args.slice(2).join(' ');
+
+    // Find the pet
+    const pet = this.currentOwner.pets.find(p => p.name === petName);
+    if (!pet) {
+      console.log(`❌ Pet "${petName}" not found for owner "${this.currentOwner.name}"`);
+      return;
+    }
+
+    // Validate property
+    const validProperties = ['name', 'species', 'sex', 'age', 'photo'];
+    if (!validProperties.includes(property)) {
+      console.log(`❌ Invalid property. Must be one of: ${validProperties.join(', ')}`);
+      return;
+    }
+
+    // Validate new value based on property
+    if (!newValue) {
+      console.log(`❌ New value cannot be empty`);
+      return;
+    }
+
+    let oldValue;
+    switch (property) {
+      case 'name':
+        // Check if new name already exists
+        const existingPet = this.currentOwner.pets.find(p => p.name === newValue && p !== pet);
+        if (existingPet) {
+          console.log(`❌ Pet name "${newValue}" already exists for owner "${this.currentOwner.name}"`);
+          return;
+        }
+        oldValue = pet.name;
+        pet.name = newValue;
+        break;
+      
+      case 'species':
+        oldValue = pet.species;
+        pet.species = newValue;
+        break;
+      
+      case 'sex':
+        const validSex = ['male', 'female', 'unknown'];
+        if (!validSex.includes(newValue.toLowerCase())) {
+          console.log(`❌ Invalid sex. Must be one of: ${validSex.join(', ')}`);
+          return;
+        }
+        oldValue = pet.sex;
+        pet.sex = newValue.toLowerCase();
+        break;
+      
+      case 'age':
+        const age = Number(newValue);
+        if (isNaN(age) || age < 0) {
+          console.log(`❌ Age must be a non-negative number, got: ${newValue}`);
+          return;
+        }
+        oldValue = pet.ageYears;
+        pet.ageYears = age;
+        break;
+      
+      case 'photo':
+        oldValue = pet.photoUrl;
+        pet.photoUrl = newValue;
+        break;
+    }
+
+    console.log(`✅ Updated pet "${petName}":`);
+    console.log(`   ${property}: ${oldValue} → ${newValue}`);
+
+    // If we changed the name, update current pet selection
+    if (property === 'name' && this.currentPet === pet) {
+      this.currentPet = pet;
+    }
+  }
+
   listPets() {
     if (!this.currentOwner) {
       console.log('❌ No owner selected');
@@ -440,12 +539,22 @@ class EnhancedPetConsole {
 
     if (args.length < 2) {
       console.log('❌ Usage: addmealbyweight <food-name> <grams>');
+      console.log('   Examples:');
+      console.log('     addmealbyweight egg 20');
+      console.log('     addmealbyweight chicken breast 50');
+      console.log('     addmealbyweight kibble 100');
       console.log('   Use "searchfood" to find available foods');
       return;
     }
 
     const foodName = args.slice(0, -1).join(' '); // Everything except last argument
     const grams = Number(args[args.length - 1]);
+
+    // Validate grams input
+    if (isNaN(grams) || grams <= 0) {
+      console.log(`❌ Grams must be a positive number, got: ${args[args.length - 1]}`);
+      return;
+    }
 
     // Search for the food in catalog
     const food = this.foodCatalog.find(f => 
@@ -463,9 +572,9 @@ class EnhancedPetConsole {
 
     const meal = this.currentPet.addMeal(mealName, calories);
     console.log(`✅ Added food: ${mealName}`);
-    console.log(`   Calories: ${calories} (${food.caloriesPerGram} per gram)`);
+    console.log(`   Calories: ${calories} (${food.caloriesPerGram} cal/g)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
-  }
+  }  
 
   addFoodBrand(args) {
     if (args.length < 4) {

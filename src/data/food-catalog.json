@@ -102,7 +102,7 @@
       "id": "cheese",
       "name": "cheese",
       "type": "dairy",
-      "caloriesPerGram": 4.0,
+      "caloriesPerGram": 4,
       "description": "Cheddar cheese"
     },
     {
@@ -137,7 +137,7 @@
       "id": "wet-food",
       "name": "wet food",
       "type": "wet",
-      "caloriesPerGram": 1.0,
+      "caloriesPerGram": 1,
       "description": "Canned wet food"
     },
     {
@@ -151,7 +151,7 @@
       "id": "bone",
       "name": "bone",
       "type": "natural",
-      "caloriesPerGram": 0.0,
+      "caloriesPerGram": 0,
       "description": "Raw bone (no calories)"
     },
     {
@@ -174,6 +174,20 @@
       "type": "natural",
       "caloriesPerGram": 8.6,
       "description": "Virgin coconut oil"
+    },
+    {
+      "id": "fromm-chicken-a-la-veg",
+      "name": "fromm-chicken-a-la-veg",
+      "type": "kibble",
+      "caloriesPerGram": 3.894,
+      "description": "cat food"
+    },
+    {
+      "id": "water",
+      "name": "water",
+      "type": "wet",
+      "caloriesPerGram": 0,
+      "description": "drink"
     }
   ]
 }
