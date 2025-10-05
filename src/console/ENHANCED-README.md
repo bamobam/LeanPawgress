@@ -65,9 +65,10 @@ npm run console
 
 ### Meal Tracking
 - `addmeal <name> <calories>` - Add meal entry with manual calories
-- `addfood <food-name> <cups>` - Add food by weight (auto-calculates calories)
+- `addmealbyweight <food-name> <grams>` - Add food by weight (auto-calculates calories)
+- `addfoodbrand <name> <type> <caloriesPerGram> [description]` - Add new food to catalog
 - `searchfood <search-term>` - Search for foods in catalog
-- `listfoods [type]` - List foods by type (dry/wet/treat/all)
+- `listfoods [type]` - List foods by type (natural/vegetable/fruit/grain/dairy/kibble/wet/treat/all)
 - `meals [date]` - Show meals for specific day
 - `mealshistory [date]` - Show meal entries for specific date
 - `setcaloriegoal <calories>` - Set daily calorie goal
@@ -109,22 +110,27 @@ pet> addweight 44.5 weekly check
    Note: weekly check
    Date: 1/15/2025
 
-pet> searchfood hills
-🔍 Food Search Results for "hills":
-   1. Hill's Science Diet Adult Perfect Weight
-      304 cal/cup - Weight management formula for adult dogs
-   2. Hill's Science Diet Puppy Large Breed
-      364 cal/cup - Large breed puppy formula
+pet> searchfood egg
+🔍 Food Search Results for "egg":
+   1. egg
+      1.55 cal/g - natural - Raw chicken egg
 
-pet> addfood hills adult 1.5
-✅ Added food: Hill's Science Diet Adult Perfect Weight (1.5 cups)
-   Calories: 456 (304 per cup)
+pet> addmealbyweight egg 20
+✅ Added food: egg (20g)
+   Calories: 31 (1.55 per gram)
    Date: 1/15/2025
 
-pet> addfood royal canin 0.5
-✅ Added food: Royal Canin German Shepherd Adult (0.5 cups)
-   Calories: 160 (320 per cup)
+pet> addmealbyweight chicken breast 50
+✅ Added food: chicken breast (50g)
+   Calories: 83 (1.65 per gram)
    Date: 1/15/2025
+
+pet> addfoodbrand "liver" "natural" 1.35 "Cooked chicken liver"
+✅ Added food to catalog:
+   Name: liver
+   Type: natural
+   Calories per gram: 1.35
+   Description: Cooked chicken liver
 
 pet> status
 📊 Status for Buddy:

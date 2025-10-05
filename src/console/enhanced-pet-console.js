@@ -39,6 +39,18 @@ class EnhancedPetConsole {
     }
   }
 
+  saveFoodCatalog() {
+    try {
+      const catalogPath = path.join(process.cwd(), 'src', 'data', 'food-catalog.json');
+      const catalog = {
+        foods: this.foodCatalog
+      };
+      fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2));
+    } catch (error) {
+      console.log('⚠️ Failed to save food catalog:', error.message);
+    }
+  }
+
   setupEventHandlers() {
     this.rl.on('line', (input) => {
       this.handleCommand(input.trim());
@@ -99,8 +111,11 @@ class EnhancedPetConsole {
         case 'addmeal':
           this.addMeal(args);
           break;
-        case 'addfood':
-          this.addFood(args);
+        case 'addmealbyweight':
+          this.addMealByWeight(args);
+          break;
+        case 'addfoodbrand':
+          this.addFoodBrand(args);
           break;
         case 'searchfood':
           this.searchFood(args);
@@ -182,9 +197,10 @@ class EnhancedPetConsole {
     
     console.log('\n🍽️ Meal Tracking:');
     console.log('  addmeal <name> <calories>               - Add meal entry');
-    console.log('  addfood <food-name> <cups>              - Add food by weight (auto-calculates calories)');
+    console.log('  addmealbyweight <food-name> <grams>     - Add food by weight (auto-calculates calories)');
+    console.log('  addfoodbrand <name> <type> <caloriesPerGram> [description] - Add new food to catalog');
     console.log('  searchfood <search-term>               - Search for foods in catalog');
-    console.log('  listfoods [type]                       - List foods by type (dry/wet/treat/all)');
+    console.log('  listfoods [type]                       - List foods by type (natural/vegetable/fruit/grain/dairy/kibble/wet/treat/all)');
     console.log('  meals [date]                            - Show meals for day');
     console.log('  mealshistory [date]                     - Show meal entries for specific date');
     console.log('  setcaloriegoal <calories>               - Set daily calorie goal');
@@ -416,25 +432,24 @@ class EnhancedPetConsole {
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
   }
 
-  addFood(args) {
+  addMealByWeight(args) {
     if (!this.currentPet) {
       console.log('❌ No pet selected');
       return;
     }
 
     if (args.length < 2) {
-      console.log('❌ Usage: addfood <food-name> <cups>');
+      console.log('❌ Usage: addmealbyweight <food-name> <grams>');
       console.log('   Use "searchfood" to find available foods');
       return;
     }
 
     const foodName = args.slice(0, -1).join(' '); // Everything except last argument
-    const cups = Number(args[args.length - 1]);
+    const grams = Number(args[args.length - 1]);
 
     // Search for the food in catalog
     const food = this.foodCatalog.find(f => 
-      f.name.toLowerCase().includes(foodName.toLowerCase()) ||
-      f.brand.toLowerCase().includes(foodName.toLowerCase())
+      f.name.toLowerCase().includes(foodName.toLowerCase())
     );
 
     if (!food) {
@@ -443,13 +458,70 @@ class EnhancedPetConsole {
       return;
     }
 
-    const calories = Math.round(food.caloriesPerCup * cups);
-    const mealName = `${food.brand} ${food.name} (${cups} cup${cups !== 1 ? 's' : ''})`;
+    const calories = Math.round(food.caloriesPerGram * grams);
+    const mealName = `${food.name} (${grams}g)`;
 
     const meal = this.currentPet.addMeal(mealName, calories);
     console.log(`✅ Added food: ${mealName}`);
-    console.log(`   Calories: ${calories} (${food.caloriesPerCup} per cup)`);
+    console.log(`   Calories: ${calories} (${food.caloriesPerGram} per gram)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
+  }
+
+  addFoodBrand(args) {
+    if (args.length < 4) {
+      console.log('❌ Usage: addfoodbrand <name> <type> <caloriesPerGram> [description]');
+      console.log('   Example: addfoodbrand "egg" "natural" 1.55 "Raw chicken egg"');
+      return;
+    }
+
+    const name = args[0];
+    const type = args[1];
+    const caloriesPerGram = Number(args[2]);
+    const description = args.slice(3).join(' ') || '';
+
+    // Validate type
+    const validTypes = ['natural', 'vegetable', 'fruit', 'grain', 'dairy', 'kibble', 'wet', 'treat'];
+    if (!validTypes.includes(type)) {
+      console.log(`❌ Invalid food type. Must be one of: ${validTypes.join(', ')}`);
+      return;
+    }
+
+    // Validate calories
+    if (isNaN(caloriesPerGram) || caloriesPerGram < 0) {
+      console.log('❌ Calories per gram must be a non-negative number');
+      return;
+    }
+
+    // Generate unique ID
+    const id = name.toLowerCase().replace(/\s+/g, '-');
+
+    // Check if food already exists
+    const existingFood = this.foodCatalog.find(f => f.id === id);
+    if (existingFood) {
+      console.log(`❌ Food "${name}" already exists in catalog`);
+      return;
+    }
+
+    // Create new food item
+    const newFood = {
+      id,
+      name,
+      type,
+      caloriesPerGram,
+      description
+    };
+
+    // Add to catalog
+    this.foodCatalog.push(newFood);
+
+    // Save to file
+    this.saveFoodCatalog();
+
+    console.log(`✅ Added food to catalog:`);
+    console.log(`   Name: ${name}`);
+    console.log(`   Type: ${type}`);
+    console.log(`   Calories per gram: ${caloriesPerGram}`);
+    if (description) console.log(`   Description: ${description}`);
   }
 
   searchFood(args) {
@@ -461,8 +533,8 @@ class EnhancedPetConsole {
     const searchTerm = args.join(' ').toLowerCase();
     const results = this.foodCatalog.filter(food => 
       food.name.toLowerCase().includes(searchTerm) ||
-      food.brand.toLowerCase().includes(searchTerm) ||
-      food.description.toLowerCase().includes(searchTerm)
+      food.description.toLowerCase().includes(searchTerm) ||
+      food.type.toLowerCase().includes(searchTerm)
     );
 
     if (results.length === 0) {
@@ -472,8 +544,8 @@ class EnhancedPetConsole {
 
     console.log(`\n🔍 Food Search Results for "${searchTerm}":`);
     results.slice(0, 10).forEach((food, index) => {
-      console.log(`   ${index + 1}. ${food.brand} ${food.name}`);
-      console.log(`      ${food.caloriesPerCup} cal/cup - ${food.description}`);
+      console.log(`   ${index + 1}. ${food.name}`);
+      console.log(`      ${food.caloriesPerGram} cal/g - ${food.type} - ${food.description}`);
     });
 
     if (results.length > 10) {
@@ -496,8 +568,8 @@ class EnhancedPetConsole {
 
     console.log(`\n🍽️ Available Foods (${type}):`);
     foods.forEach((food, index) => {
-      console.log(`   ${index + 1}. ${food.brand} ${food.name}`);
-      console.log(`      ${food.caloriesPerCup} cal/cup - ${food.type} food`);
+      console.log(`   ${index + 1}. ${food.name}`);
+      console.log(`      ${food.caloriesPerGram} cal/g - ${food.type}`);
     });
   }
 

@@ -1,164 +1,179 @@
 {
   "foods": [
     {
-      "id": "hill-science-diet-adult",
-      "brand": "Hill's Science Diet",
-      "name": "Adult Perfect Weight",
-      "type": "dry",
-      "caloriesPerCup": 304,
-      "description": "Weight management formula for adult dogs"
+      "id": "egg",
+      "name": "egg",
+      "type": "natural",
+      "caloriesPerGram": 1.55,
+      "description": "Raw chicken egg"
     },
     {
-      "id": "hill-science-diet-puppy",
-      "brand": "Hill's Science Diet",
-      "name": "Puppy Large Breed",
-      "type": "dry",
-      "caloriesPerCup": 364,
-      "description": "Large breed puppy formula"
+      "id": "chicken-breast",
+      "name": "chicken breast",
+      "type": "natural",
+      "caloriesPerGram": 1.65,
+      "description": "Cooked chicken breast (no skin)"
     },
     {
-      "id": "royal-canin-german-shepherd",
-      "brand": "Royal Canin",
-      "name": "German Shepherd Adult",
-      "type": "dry",
-      "caloriesPerCup": 320,
-      "description": "Breed-specific nutrition for German Shepherds"
+      "id": "salmon",
+      "name": "salmon",
+      "type": "natural",
+      "caloriesPerGram": 2.08,
+      "description": "Cooked salmon fillet"
     },
     {
-      "id": "royal-canin-french-bulldog",
-      "brand": "Royal Canin",
-      "name": "French Bulldog Adult",
-      "type": "dry",
-      "caloriesPerCup": 340,
-      "description": "Breed-specific nutrition for French Bulldogs"
+      "id": "beef",
+      "name": "beef",
+      "type": "natural",
+      "caloriesPerGram": 2.5,
+      "description": "Cooked lean beef"
     },
     {
-      "id": "purina-pro-plan-sport",
-      "brand": "Purina Pro Plan",
-      "name": "Sport Performance 30/20",
-      "type": "dry",
-      "caloriesPerCup": 475,
-      "description": "High-protein formula for active dogs"
+      "id": "carrot",
+      "name": "carrot",
+      "type": "vegetable",
+      "caloriesPerGram": 0.41,
+      "description": "Raw carrot"
     },
     {
-      "id": "wellness-core-original",
-      "brand": "Wellness Core",
-      "name": "Original Recipe",
-      "type": "dry",
-      "caloriesPerCup": 390,
-      "description": "Grain-free high-protein formula"
+      "id": "sweet-potato",
+      "name": "sweet potato",
+      "type": "vegetable",
+      "caloriesPerGram": 0.86,
+      "description": "Cooked sweet potato"
     },
     {
-      "id": "blue-buffalo-life-protection",
-      "brand": "Blue Buffalo",
-      "name": "Life Protection Formula",
-      "type": "dry",
-      "caloriesPerCup": 350,
-      "description": "Natural ingredients with real meat"
+      "id": "green-beans",
+      "name": "green beans",
+      "type": "vegetable",
+      "caloriesPerGram": 0.31,
+      "description": "Cooked green beans"
     },
     {
-      "id": "orijen-original",
-      "brand": "Orijen",
-      "name": "Original Recipe",
-      "type": "dry",
-      "caloriesPerCup": 445,
-      "description": "Biologically appropriate raw-inspired"
+      "id": "blueberries",
+      "name": "blueberries",
+      "type": "fruit",
+      "caloriesPerGram": 0.57,
+      "description": "Fresh blueberries"
     },
     {
-      "id": "acana-grassland",
-      "brand": "Acana",
-      "name": "Grassland Formula",
-      "type": "dry",
-      "caloriesPerCup": 420,
-      "description": "Free-run poultry and grass-fed lamb"
+      "id": "apple",
+      "name": "apple",
+      "type": "fruit",
+      "caloriesPerGram": 0.52,
+      "description": "Raw apple (without core)"
     },
     {
-      "id": "taste-of-the-wild-pacific",
-      "brand": "Taste of the Wild",
-      "name": "Pacific Stream",
-      "type": "dry",
-      "caloriesPerCup": 360,
-      "description": "Grain-free with smoked salmon"
+      "id": "banana",
+      "name": "banana",
+      "type": "fruit",
+      "caloriesPerGram": 0.89,
+      "description": "Raw banana"
     },
     {
-      "id": "hill-science-diet-cat-adult",
-      "brand": "Hill's Science Diet",
-      "name": "Adult Indoor Cat",
-      "type": "dry",
-      "caloriesPerCup": 280,
-      "description": "Indoor cat formula with natural fiber"
+      "id": "rice",
+      "name": "rice",
+      "type": "grain",
+      "caloriesPerGram": 1.3,
+      "description": "Cooked white rice"
     },
     {
-      "id": "royal-canin-feline-health",
-      "brand": "Royal Canin",
-      "name": "Feline Health Nutrition",
-      "type": "dry",
-      "caloriesPerCup": 300,
-      "description": "Complete nutrition for adult cats"
+      "id": "oats",
+      "name": "oats",
+      "type": "grain",
+      "caloriesPerGram": 3.89,
+      "description": "Dry rolled oats"
     },
     {
-      "id": "wellness-core-cat",
-      "brand": "Wellness Core",
-      "name": "Indoor Cat Formula",
-      "type": "dry",
-      "caloriesPerCup": 320,
-      "description": "Grain-free indoor cat formula"
+      "id": "pumpkin",
+      "name": "pumpkin",
+      "type": "vegetable",
+      "caloriesPerGram": 0.26,
+      "description": "Cooked pumpkin puree"
     },
     {
-      "id": "blue-buffalo-cat-indoor",
-      "brand": "Blue Buffalo",
-      "name": "Indoor Health Cat",
-      "type": "dry",
-      "caloriesPerCup": 290,
-      "description": "Natural indoor cat nutrition"
+      "id": "yogurt",
+      "name": "yogurt",
+      "type": "dairy",
+      "caloriesPerGram": 0.59,
+      "description": "Plain Greek yogurt"
     },
     {
-      "id": "purina-pro-plan-cat",
-      "brand": "Purina Pro Plan",
-      "name": "Indoor Care",
-      "type": "dry",
-      "caloriesPerCup": 310,
-      "description": "Specialized nutrition for indoor cats"
+      "id": "cheese",
+      "name": "cheese",
+      "type": "dairy",
+      "caloriesPerGram": 4.0,
+      "description": "Cheddar cheese"
     },
     {
-      "id": "wet-food-fancy-feast",
-      "brand": "Fancy Feast",
-      "name": "Classic Pate",
+      "id": "peanut-butter",
+      "name": "peanut butter",
+      "type": "natural",
+      "caloriesPerGram": 5.88,
+      "description": "Natural peanut butter (no sugar)"
+    },
+    {
+      "id": "liver",
+      "name": "liver",
+      "type": "natural",
+      "caloriesPerGram": 1.35,
+      "description": "Cooked chicken liver"
+    },
+    {
+      "id": "kibble-hills",
+      "name": "hills kibble",
+      "type": "kibble",
+      "caloriesPerGram": 3.4,
+      "description": "Hill's Science Diet dry food"
+    },
+    {
+      "id": "kibble-royal-canin",
+      "name": "royal canin kibble",
+      "type": "kibble",
+      "caloriesPerGram": 3.6,
+      "description": "Royal Canin dry food"
+    },
+    {
+      "id": "wet-food",
+      "name": "wet food",
       "type": "wet",
-      "caloriesPerCup": 95,
-      "description": "Classic pate wet food for cats"
+      "caloriesPerGram": 1.0,
+      "description": "Canned wet food"
     },
     {
-      "id": "wet-food-friskies",
-      "brand": "Friskies",
-      "name": "Classic Pate",
-      "type": "wet",
-      "caloriesPerCup": 100,
-      "description": "Classic pate wet food"
-    },
-    {
-      "id": "wet-food-wellness-core",
-      "brand": "Wellness Core",
-      "name": "Grain-Free Pate",
-      "type": "wet",
-      "caloriesPerCup": 120,
-      "description": "Grain-free wet food pate"
-    },
-    {
-      "id": "treats-greenies",
-      "brand": "Greenies",
-      "name": "Dental Treats",
+      "id": "treats",
+      "name": "treats",
       "type": "treat",
-      "caloriesPerCup": 150,
-      "description": "Dental care treats for dogs"
+      "caloriesPerGram": 3.5,
+      "description": "Dog training treats"
     },
     {
-      "id": "treats-blue-buffalo",
-      "brand": "Blue Buffalo",
-      "name": "Training Treats",
-      "type": "treat",
-      "caloriesPerCup": 200,
-      "description": "Natural training treats"
+      "id": "bone",
+      "name": "bone",
+      "type": "natural",
+      "caloriesPerGram": 0.0,
+      "description": "Raw bone (no calories)"
+    },
+    {
+      "id": "broccoli",
+      "name": "broccoli",
+      "type": "vegetable",
+      "caloriesPerGram": 0.34,
+      "description": "Cooked broccoli"
+    },
+    {
+      "id": "spinach",
+      "name": "spinach",
+      "type": "vegetable",
+      "caloriesPerGram": 0.23,
+      "description": "Raw spinach"
+    },
+    {
+      "id": "coconut-oil",
+      "name": "coconut oil",
+      "type": "natural",
+      "caloriesPerGram": 8.6,
+      "description": "Virgin coconut oil"
     }
   ]
 }
