@@ -14,7 +14,11 @@ export class Pet {
     this.dailyCalorieGoal = null;
 
     this.weightLog = [];             // WeightEntry[]
-    if (startWeightLb) this.weightLog.push(new WeightEntry(startWeightLb));
+    if (startWeightLb) {
+      // Set start weight to a date far in the past to ensure it's not the latest
+      const startDate = new Date('2020-01-01'); // Far in the past
+      this.weightLog.push(new WeightEntry(startWeightLb, startDate));
+    }
     this.meals = [];                 // MealEntry[]
   }
 
