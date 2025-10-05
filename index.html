@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐾 LeanPawgress - Pet Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-paw"></i>
+                    LeanPawgress
+                </h1>
+                <p class="app-subtitle">Your Pet's Health Journey</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Owner Section -->
+            <section class="owner-section" id="ownerSection">
+                <div class="card">
+                    <h2><i class="fas fa-user"></i> Owner Management</h2>
+                    <div class="form-group">
+                        <input type="text" id="ownerName" placeholder="Enter owner name" class="input-field">
+                        <input type="email" id="ownerEmail" placeholder="Enter email (optional)" class="input-field">
+                        <button id="createOwnerBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Owner
+                        </button>
+                    </div>
+                    <div class="owner-list" id="ownerList"></div>
+                </div>
+            </section>
+
+            <!-- Pet Section -->
+            <section class="pet-section" id="petSection" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-paw"></i> Pet Management</h2>
+                    <div class="current-owner" id="currentOwner"></div>
+                    
+                    <!-- Create Pet Form -->
+                    <div class="form-group">
+                        <input type="text" id="petName" placeholder="Pet name" class="input-field">
+                        <select id="petSpecies" class="input-field">
+                            <option value="dog">🐕 Dog</option>
+                            <option value="cat">🐱 Cat</option>
+                            <option value="bird">🐦 Bird</option>
+                            <option value="rabbit">🐰 Rabbit</option>
+                            <option value="hamster">🐹 Hamster</option>
+                            <option value="other">🐾 Other</option>
+                        </select>
+                        <select id="petSex" class="input-field">
+                            <option value="male">♂️ Male</option>
+                            <option value="female">♀️ Female</option>
+                            <option value="unknown">❓ Unknown</option>
+                        </select>
+                        <input type="number" id="petAge" placeholder="Age (years)" class="input-field" min="0" step="0.1">
+                        <input type="number" id="petWeight" placeholder="Starting weight (lbs)" class="input-field" min="0" step="0.1">
+                        <button id="createPetBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Pet
+                        </button>
+                    </div>
+                    
+                    <div class="pet-list" id="petList"></div>
+                </div>
+            </section>
+
+            <!-- Pet Details Section -->
+            <section class="pet-details-section" id="petDetailsSection" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-heart"></i> Pet Details</h2>
+                    <div class="current-pet" id="currentPet"></div>
+                    
+                    <!-- Edit Pet Form -->
+                    <div class="edit-pet-form" id="editPetForm" style="display: none;">
+                        <h3>Edit Pet Information</h3>
+                        <div class="form-group">
+                            <input type="text" id="editPetName" placeholder="Pet name" class="input-field">
+                            <select id="editPetSpecies" class="input-field">
+                                <option value="dog">🐕 Dog</option>
+                                <option value="cat">🐱 Cat</option>
+                                <option value="bird">🐦 Bird</option>
+                                <option value="rabbit">🐰 Rabbit</option>
+                                <option value="hamster">🐹 Hamster</option>
+                                <option value="other">🐾 Other</option>
+                            </select>
+                            <select id="editPetSex" class="input-field">
+                                <option value="male">♂️ Male</option>
+                                <option value="female">♀️ Female</option>
+                                <option value="unknown">❓ Unknown</option>
+                            </select>
+                            <input type="number" id="editPetAge" placeholder="Age (years)" class="input-field" min="0" step="0.1">
+                            <input type="url" id="editPetPhoto" placeholder="Photo URL" class="input-field">
+                            <div class="button-group">
+                                <button id="savePetBtn" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                                <button id="cancelEditBtn" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weight Tracking Section -->
+            <section class="weight-section" id="weightSection" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-weight"></i> Weight Tracking</h2>
+                    
+                    <!-- Add Weight Form -->
+                    <div class="form-group">
+                        <input type="number" id="weightValue" placeholder="Weight (lbs)" class="input-field" min="0" step="0.1">
+                        <input type="text" id="weightNote" placeholder="Note (optional)" class="input-field">
+                        <button id="addWeightBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Weight
+                        </button>
+                    </div>
+                    
+                    <!-- Weight Goal -->
+                    <div class="form-group">
+                        <input type="number" id="goalWeight" placeholder="Goal weight (lbs)" class="input-field" min="0" step="0.1">
+                        <button id="setGoalBtn" class="btn btn-secondary">
+                            <i class="fas fa-target"></i> Set Goal
+                        </button>
+                    </div>
+                    
+                    <div class="weight-history" id="weightHistory"></div>
+                </div>
+            </section>
+
+            <!-- Meal Tracking Section -->
+            <section class="meal-section" id="mealSection" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-utensils"></i> Meal Tracking</h2>
+                    
+                    <!-- Add Meal Form -->
+                    <div class="form-group">
+                        <input type="text" id="mealName" placeholder="Meal name" class="input-field">
+                        <input type="number" id="mealCalories" placeholder="Calories" class="input-field" min="0">
+                        <button id="addMealBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Meal
+                        </button>
+                    </div>
+                    
+                    <!-- Add Food by Weight Form -->
+                    <div class="form-group">
+                        <select id="foodSelect" class="input-field">
+                            <option value="">Select a food...</option>
+                        </select>
+                        <input type="number" id="foodGrams" placeholder="Grams" class="input-field" min="0" step="0.1">
+                        <button id="addFoodBtn" class="btn btn-primary">
+                            <i class="fas fa-balance-scale"></i> Add by Weight
+                        </button>
+                    </div>
+                    
+                    <!-- Calorie Goal -->
+                    <div class="form-group">
+                        <input type="number" id="calorieGoal" placeholder="Daily calorie goal" class="input-field" min="0">
+                        <button id="setCalorieGoalBtn" class="btn btn-secondary">
+                            <i class="fas fa-target"></i> Set Goal
+                        </button>
+                    </div>
+                    
+                    <div class="meal-history" id="mealHistory"></div>
+                </div>
+            </section>
+
+            <!-- Status Dashboard -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> Pet Status</h2>
+                    <div class="status-dashboard" id="statusDashboard"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Cute Cat Illustration -->
+        <div class="cat-illustration">
+            <div class="cat-face">
+                <div class="cat-eyes">
+                    <div class="eye left"></div>
+                    <div class="eye right"></div>
+                </div>
+                <div class="cat-nose"></div>
+                <div class="cat-cheeks">
+                    <div class="cheek left"></div>
+                    <div class="cheek right"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paw Print Decorations -->
+        <div class="paw-prints">
+            <div class="paw-print paw-1">🐾</div>
+            <div class="paw-print paw-2">🐾</div>
+            <div class="paw-print paw-3">🐾</div>
+            <div class="paw-print paw-4">🐾</div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with <i class="fas fa-heart"></i> for your furry friends</p>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
