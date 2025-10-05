@@ -61,7 +61,7 @@ npm run console
 - `addweight <pounds> [note]` - Add weight entry
 - `weights` - Show complete weight history
 - `weightshistory [date]` - Show weight entries for specific date
-- `setgoal <weight>` - Set goal weight
+- `setweightgoal <weight>` - Set goal weight
 
 ### Meal Tracking
 - `addmeal <name> <calories>` - Add meal entry
@@ -95,7 +95,7 @@ pet> createpet Buddy dog male 3 45
    Species: dog, Sex: male, Age: 3 years
    Starting weight: 45 lbs
 
-pet> setgoal 40
+pet> setweightgoal 40
 ✅ Set goal weight: 40 lbs
 
 pet> setcaloriegoal 800

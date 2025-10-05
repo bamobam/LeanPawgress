@@ -1,5 +1,5 @@
 import { makeId } from './ids.js';
-import { Pet } from './Pet.js';
+import { Pet } from './pet.js';
 
 export class Owner {
   constructor({ name, email = null }) {

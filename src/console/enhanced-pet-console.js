@@ -3,6 +3,8 @@ import { Pet } from '../model/pet.js';
 import { Owner } from '../model/Owner.js';
 import { WeightEntry, MealEntry } from '../model/entries.js';
 import readline from 'readline';
+import fs from 'fs';
+import path from 'path';
 
 class EnhancedPetConsole {
   constructor() {
@@ -79,7 +81,7 @@ class EnhancedPetConsole {
         case 'addmeal':
           this.addMeal(args);
           break;
-        case 'setgoal':
+        case 'setweightgoal':
           this.setGoal(args);
           break;
         case 'setcaloriegoal':
@@ -111,6 +113,9 @@ class EnhancedPetConsole {
           break;
         case 'load':
           this.loadData(args);
+          break;
+        case 'listfiles':
+          this.listFiles();
           break;
         case 'clear':
           console.clear();
@@ -146,7 +151,7 @@ class EnhancedPetConsole {
     console.log('  addweight <pounds> [note]               - Add weight entry');
     console.log('  weights                                 - Show weight history');
     console.log('  weightshistory [date]                   - Show weight entries for specific date');
-    console.log('  setgoal <weight>                        - Set goal weight');
+    console.log('  setweightgoal <weight>                  - Set goal weight');
     
     console.log('\n🍽️ Meal Tracking:');
     console.log('  addmeal <name> <calories>               - Add meal entry');
@@ -160,8 +165,9 @@ class EnhancedPetConsole {
     console.log('  report [petname]                        - Generate comprehensive report');
     
     console.log('\n💾 Data Management:');
-    console.log('  save [filename]                         - Save all data to localStorage');
-    console.log('  load [filename]                          - Load data from localStorage');
+    console.log('  save [filename]                         - Save all data to file');
+    console.log('  load [filename]                          - Load data from file');
+    console.log('  listfiles                               - List all saved data files');
     
     console.log('\n🔧 Utility:');
     console.log('  clear                                   - Clear screen');
@@ -387,7 +393,7 @@ class EnhancedPetConsole {
     }
 
     if (args.length < 1) {
-      console.log('❌ Usage: setgoal <weight>');
+      console.log('❌ Usage: setweightgoal <weight>');
       return;
     }
 
@@ -591,10 +597,17 @@ class EnhancedPetConsole {
         currentPetName: this.currentPet?.name || null
       };
       
-      localStorage.setItem(filename, JSON.stringify(data));
-      console.log(`✅ Saved all data to localStorage with key: ${filename}`);
+      // Create data directory if it doesn't exist
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      
+      const filePath = path.join(dataDir, `${filename}.json`);
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+      console.log(`✅ Saved all data to file: ${filePath}`);
     } catch (error) {
-      console.log('❌ Failed to save data to localStorage');
+      console.log(`❌ Failed to save data: ${error.message}`);
     }
   }
 
@@ -607,12 +620,15 @@ class EnhancedPetConsole {
     const filename = args[0];
     
     try {
-      const data = localStorage.getItem(filename);
-      if (!data) {
-        console.log(`❌ No data found with key: ${filename}`);
+      const dataDir = path.join(process.cwd(), 'data');
+      const filePath = path.join(dataDir, `${filename}.json`);
+      
+      if (!fs.existsSync(filePath)) {
+        console.log(`❌ No data file found: ${filePath}`);
         return;
       }
 
+      const data = fs.readFileSync(filePath, 'utf8');
       const parsedData = JSON.parse(data);
       
       // Clear current data
@@ -634,10 +650,39 @@ class EnhancedPetConsole {
         }
       }
       
-      console.log(`✅ Loaded data from localStorage: ${filename}`);
+      console.log(`✅ Loaded data from file: ${filePath}`);
       console.log(`   Loaded ${this.owners.size} owner(s)`);
     } catch (error) {
-      console.log('❌ Failed to load data from localStorage');
+      console.log(`❌ Failed to load data: ${error.message}`);
+    }
+  }
+
+  listFiles() {
+    try {
+      const dataDir = path.join(process.cwd(), 'data');
+      
+      if (!fs.existsSync(dataDir)) {
+        console.log('📝 No data directory found. No files saved yet.');
+        return;
+      }
+
+      const files = fs.readdirSync(dataDir).filter(file => file.endsWith('.json'));
+      
+      if (files.length === 0) {
+        console.log('📝 No data files found.');
+        return;
+      }
+
+      console.log('\n📁 Saved Data Files:');
+      files.forEach(file => {
+        const filePath = path.join(dataDir, file);
+        const stats = fs.statSync(filePath);
+        const date = stats.mtime.toLocaleDateString();
+        const time = stats.mtime.toLocaleTimeString();
+        console.log(`  ${file} (${date} ${time})`);
+      });
+    } catch (error) {
+      console.log(`❌ Failed to list files: ${error.message}`);
     }
   }
 
