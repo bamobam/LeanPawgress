@@ -1,0 +1,12 @@
+{
+  "owners": [
+    {
+      "id": "4e423569-2945-4ec0-9af9-7a14907d9bae",
+      "name": "beck",
+      "email": null,
+      "pets": []
+    }
+  ],
+  "currentOwnerName": "beck",
+  "currentPetName": null
+}

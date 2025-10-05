@@ -1,7 +1,7 @@
 // test/pet.test.js
 import { describe, it, expect } from 'vitest';
 import { mockIds } from './helpers/idMock.js';
-import { Pet } from '../model/Pet.js';
+import { Pet } from '../model/pet.js';
 
 describe('Pet', () => {
   it('creates with start weight and computes goal status', () => {
