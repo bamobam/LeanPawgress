@@ -12,6 +12,7 @@ class EnhancedPetConsole {
     this.currentOwner = null;
     this.currentPet = null;
     this.foodCatalog = []; // Store food catalog
+    this.poisonCatalog = []; // Store poisonous food catalog
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -19,6 +20,7 @@ class EnhancedPetConsole {
     });
 
     this.loadFoodCatalog();
+    this.loadPoisonCatalog();
     this.setupEventHandlers();
     this.showWelcome();
   }
@@ -26,18 +28,72 @@ class EnhancedPetConsole {
   loadFoodCatalog() {
     try {
       const catalogPath = path.join(process.cwd(), 'src', 'data', 'food-catalog.json');
-      if (fs.existsSync(catalogPath)) {
-        const data = fs.readFileSync(catalogPath, 'utf8');
-        const catalog = JSON.parse(data);
-        this.foodCatalog = catalog.foods || [];
-        console.log(`📚 Loaded ${this.foodCatalog.length} food items from catalog`);
-      } else {
+      if (!fs.existsSync(catalogPath)) {
         console.log('⚠️ Food catalog not found. Food features will be limited.');
+        this.foodCatalog = [];
+        return;
       }
+  
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      const foods = Array.isArray(parsed.foods) ? parsed.foods : [];
+  
+      const warn = (msg) => console.log('⚠️', msg);
+  
+      this.foodCatalog = foods
+        .map((f, idx) => {
+          const name = (f.name || '').trim();
+          if (!name) { warn(`foods[${idx}] missing name — skipped`); return null; }
+  
+          // derive/normalize calories per gram
+          let cpg = f.caloriesPerGram;
+          if (cpg == null && f.kcalPerKg != null) cpg = Number(f.kcalPerKg) / 1000;
+          cpg = Number(cpg);
+  
+          if (!Number.isFinite(cpg) || cpg <= 0) {
+            warn(`"${name}" has invalid caloriesPerGram (${f.caloriesPerGram ?? f.kcalPerKg}) — skipped`);
+            return null;
+          }
+  
+          const id = (f.id || name.toLowerCase().replace(/\s+/g, '-')).trim();
+          const type = (f.type || 'unknown').toLowerCase();
+  
+          return {
+            id,
+            name,
+            type,
+            caloriesPerGram: cpg,
+            description: f.description || ''
+          };
+        })
+        .filter(Boolean);
+  
+      console.log(`📚 Loaded ${this.foodCatalog.length} food items from catalog`);
     } catch (error) {
       console.log('⚠️ Failed to load food catalog:', error.message);
+      this.foodCatalog = [];
     }
   }
+  
+
+  loadPoisonCatalog() {
+    try {
+      const p = path.join(process.cwd(), 'src', 'data', 'poisons.json');
+      if (fs.existsSync(p)) {
+        const txt = fs.readFileSync(p, 'utf8');
+        const j = JSON.parse(txt);
+        this.poisonCatalog = (j.items || []).map(x => ({
+          ...x,
+          names: (x.names || []).map(n => n.toLowerCase())
+        }));
+        console.log(`☠️  Loaded ${this.poisonCatalog.length} toxic foods`);
+      } else {
+        console.log('⚠️ Toxic food catalog not found (src/data/poisons.json).');
+      }
+    } catch (e) {
+      console.log('⚠️ Failed to load toxic catalog:', e.message);
+    }
+}
 
   saveFoodCatalog() {
     try {
@@ -143,6 +199,9 @@ class EnhancedPetConsole {
           break;
         case 'meals':
           this.showMeals(args);
+          break;
+        case 'checkfood':
+          this.cmdCheckFood(args);
           break;
         case 'weightshistory':
           this.showWeightsHistory(args);
@@ -526,6 +585,15 @@ class EnhancedPetConsole {
     const name = args[0];
     const calories = Number(args[1]);
 
+    const species = (this.currentPet?.species || 'dog').toLowerCase();
+    const toxic = this.isToxicFor(name /* or food.name */, species);
+    if (toxic) {
+        console.log(`☠️  WARNING: "${name}" is toxic for ${species} (${toxic.severity}). ${toxic.dose_notes || ''}`);
+        console.log('    Use "--force" at the end of the command to log anyway (for testing).');
+    if (args.at(-1) !== '--force') return;
+    else args.pop(); // strip flag
+    }
+
     const meal = this.currentPet.addMeal(name, calories);
     console.log(`✅ Added meal: ${name} (${calories} calories)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
@@ -567,12 +635,21 @@ class EnhancedPetConsole {
       return;
     }
 
-    const calories = Math.round(food.caloriesPerGram * grams);
+    const species = (this.currentPet?.species || 'dog').toLowerCase();
+    const toxic = this.isToxicFor(args[0] /* or food.name */, species);
+    if (toxic) {
+        console.log(`☠️  WARNING: "${food.name}" is toxic for ${species} (${toxic.severity}). ${toxic.dose_notes || ''}`);
+        console.log('    Use "--force" at the end of the command to log anyway (for testing).');
+        if (args.at(-1) !== '--force') return;    
+        else args.pop(); // strip flag          
+    }
+
+    const calpergram = Math.round(food.caloriesPerGram * grams);
     const mealName = `${food.name} (${grams}g)`;
 
-    const meal = this.currentPet.addMeal(mealName, calories);
+    const meal = this.currentPet.addMeal(mealName, calpergram);
     console.log(`✅ Added food: ${mealName}`);
-    console.log(`   Calories: ${calories} (${food.caloriesPerGram} cal/g)`);
+    console.log(`   Calories: ${calpergram} (${food.caloriesPerGram} cal/g)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
   }  
 
@@ -814,6 +891,30 @@ class EnhancedPetConsole {
     });
   }
 
+  isToxicFor(name, species) {
+    if (!name) return null;
+    const q = name.toLowerCase();
+    const hit = this.poisonCatalog.find(it =>
+      (!species || it.species.includes(species)) &&
+      (it.names.includes(q) || it.names.some(n => q.includes(n)))
+    );
+    return hit || null;
+  }
+
+  cmdCheckFood(args) {
+    if (!args.length) return console.log('❌ Usage: checkfood <name> [dog|cat]');
+    const species = (args.at(-1)?.toLowerCase() === 'dog' || args.at(-1)?.toLowerCase() === 'cat')
+      ? args.pop().toLowerCase()
+      : (this.currentPet?.species?.toLowerCase() || null);
+    const name = args.join(' ');
+    const hit = this.isToxicFor(name, species);
+    if (!hit) return console.log(`✅ "${name}" shows no match in toxic catalog${species ? ` for ${species}` : ''}.`);
+    console.log(`☠️  "${name}" is DANGEROUS for ${species || hit.species.join('/')} — ${hit.severity.toUpperCase()}`);
+    console.log(`   Toxins: ${hit.toxins.join(', ')}`);
+    console.log(`   Symptoms: ${hit.symptoms.join(', ')}`);
+    if (hit.dose_notes) console.log(`   Dose: ${hit.dose_notes}`);
+  }
+
   showMealsHistory(args) {
     if (!this.currentPet) {
       console.log('❌ No pet selected');
@@ -952,6 +1053,7 @@ class EnhancedPetConsole {
       console.log(`❌ Failed to load data: ${error.message}`);
     }
   }
+  
 
   listFiles() {
     try {

@@ -50,10 +50,6 @@
                         <select id="petSpecies" class="input-field">
                             <option value="dog">🐕 Dog</option>
                             <option value="cat">🐱 Cat</option>
-                            <option value="bird">🐦 Bird</option>
-                            <option value="rabbit">🐰 Rabbit</option>
-                            <option value="hamster">🐹 Hamster</option>
-                            <option value="other">🐾 Other</option>
                         </select>
                         <select id="petSex" class="input-field">
                             <option value="male">♂️ Male</option>
@@ -136,42 +132,67 @@
                 </div>
             </section>
 
-            <!-- Meal Tracking Section -->
             <section class="meal-section" id="mealSection" style="display: none;">
                 <div class="card">
-                    <h2><i class="fas fa-utensils"></i> Meal Tracking</h2>
-                    
-                    <!-- Add Meal Form -->
-                    <div class="form-group">
-                        <input type="text" id="mealName" placeholder="Meal name" class="input-field">
-                        <input type="number" id="mealCalories" placeholder="Calories" class="input-field" min="0">
-                        <button id="addMealBtn" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Add Meal
-                        </button>
-                    </div>
-                    
-                    <!-- Add Food by Weight Form -->
-                    <div class="form-group">
-                        <select id="foodSelect" class="input-field">
-                            <option value="">Select a food...</option>
-                        </select>
-                        <input type="number" id="foodGrams" placeholder="Grams" class="input-field" min="0" step="0.1">
-                        <button id="addFoodBtn" class="btn btn-primary">
-                            <i class="fas fa-balance-scale"></i> Add by Weight
-                        </button>
-                    </div>
-                    
-                    <!-- Calorie Goal -->
-                    <div class="form-group">
-                        <input type="number" id="calorieGoal" placeholder="Daily calorie goal" class="input-field" min="0">
-                        <button id="setCalorieGoalBtn" class="btn btn-secondary">
-                            <i class="fas fa-target"></i> Set Goal
-                        </button>
-                    </div>
-                    
-                    <div class="meal-history" id="mealHistory"></div>
+                  <h2><i class="fas fa-utensils"></i> Meal Tracking</h2>
+              
+                  <!-- Add Meal Form -->
+                  <div class="form-group">
+                    <input type="text" id="mealName" placeholder="Meal name" class="input-field">
+                    <input type="number" id="mealCalories" placeholder="Calories" class="input-field" min="0">
+                    <button id="addMealBtn" class="btn btn-primary">
+                      <i class="fas fa-plus"></i> Add Meal
+                    </button>
+                  </div>
+              
+                  <!-- Add Food by Weight Form -->
+                  <div class="form-group">
+                    <select id="foodSelect" class="input-field">
+                      <option value="">Select a food...</option>
+                    </select>
+                    <input type="number" id="foodGrams" placeholder="Grams" class="input-field" min="0" step="0.1">
+                    <button id="addFoodBtn" class="btn btn-primary">
+                      <i class="fas fa-balance-scale"></i> Add by Weight
+                    </button>
                 </div>
-            </section>
+              
+                  <!-- Add Food Brand to Personal Catalog -->
+                  <h3 style="margin-top:10px;">Add Food Brand</h3>
+                  <div class="form-group">
+                    <input type="text" id="brandName" placeholder="Brand / Food Name" class="input-field">
+                    <select id="brandType" class="input-field">
+                      <option value="kibble">Kibble</option>
+                      <option value="wet">Wet</option>
+                      <option value="treat">Treat</option>
+                      <option value="natural">Natural</option>
+                      <option value="dairy">Dairy</option>
+                      <option value="vegetable">Vegetable</option>
+                      <option value="fruit">Fruit</option>
+                      <option value="grain">Grain</option>
+                      <option value="other" selected>Other</option>
+                    </select>
+                    <input type="number" id="brandCalsPerGram" placeholder="Calories per gram (cal/g)" class="input-field" min="0" step="0.01">
+                    <input type="text" id="brandDesc" placeholder="Description (optional)" class="input-field">
+                    <button id="addBrandBtn" class="btn btn-success">
+                      <i class="fas fa-plus-circle"></i> Add to My Catalog
+                    </button>
+                  </div>
+                  <p style="font-size:.85rem;color:#666;">
+                    Tip: If you only know kcal/kg, divide by 1000 to get cal/g (e.g., 4100 kcal/kg → 4.1 cal/g).
+                  </p>
+              
+                  <!-- Calorie Goal -->
+                  <div class="form-group">
+                    <input type="number" id="calorieGoal" placeholder="Daily calorie goal" class="input-field" min="0">
+                    <button id="setCalorieGoalBtn" class="btn btn-secondary">
+                      <i class="fas fa-target"></i> Set Goal
+                    </button>
+                  </div>
+              
+                  <div class="meal-history" id="mealHistory"></div>
+                </div>
+              </section>
+              
 
             <!-- Status Dashboard -->
             <section class="status-section" id="statusSection" style="display: none;">

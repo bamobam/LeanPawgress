@@ -9,27 +9,80 @@ class PetManagementApp {
         this.currentOwner = null;
         this.currentPet = null;
         this.foodCatalog = [];
-        
+        this.poisonCatalog = [];
+        this.userFoodsKey = 'lp:userFoods'; // localStorage key
+
         this.init();
     }
 
     async init() {
         await this.loadFoodCatalog();
+        await this.loadPoisonCatalog();
         this.setupEventListeners();
         this.updateUI();
     }
 
     async loadFoodCatalog() {
         try {
-            const response = await fetch('./src/data/food-catalog.json');
-            const data = await response.json();
-            this.foodCatalog = data.foods || [];
-            this.populateFoodSelect();
-        } catch (error) {
-            console.error('Failed to load food catalog:', error);
-            this.showMessage('Failed to load food catalog', 'error');
+          // 1) Built-in catalog
+          const res = await fetch('./src/data/food-catalog.json');
+          const base = await res.json();
+          const baseFoods = Array.isArray(base.foods) ? base.foods : [];
+      
+          const normalize = (f) => {
+            const name = (f.name || '').trim();
+            if (!name) return null;
+            let cpg = f.caloriesPerGram;
+            if (cpg == null && f.kcalPerKg != null) cpg = Number(f.kcalPerKg) / 1000;
+            cpg = Number(cpg);
+            if (!Number.isFinite(cpg) || cpg <= 0) return null;
+            return {
+              id: (f.id || name.toLowerCase().replace(/\s+/g, '-')),
+              name,
+              type: (f.type || 'other').toLowerCase(),
+              caloriesPerGram: cpg,
+              description: f.description || ''
+            };
+          };
+          const normalizedBase = baseFoods.map(normalize).filter(Boolean);
+      
+          // 2) User catalog from localStorage
+          const userJson = localStorage.getItem(this.userFoodsKey);
+          const userFoods = userJson ? JSON.parse(userJson) : [];
+          const normalizedUser = userFoods.map(normalize).filter(Boolean);
+      
+          // Merge: user overrides by id
+          const byId = new Map();
+          [...normalizedBase, ...normalizedUser].forEach(f => byId.set(f.id, f));
+          this.foodCatalog = [...byId.values()];
+      
+          this.populateFoodSelect();
+        } catch (err) {
+          console.error('Failed to load food catalog:', err);
+          this.foodCatalog = [];
+          this.populateFoodSelect();
+          this.showMessage('Failed to load food catalog', 'error');
         }
-    }
+      }
+
+      async loadPoisonCatalog() {
+        try {
+          const res = await fetch('./src/data/poisons.json');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const pj = await res.json();
+          this.poisonCatalog = (pj.items || []).map(x => ({
+            ...x,
+            names: (x.names || []).map(n => n.toLowerCase()),
+            species: (x.species || []).map(s => s.toLowerCase())
+          }));
+        } catch (e) {
+          console.warn('No poisons catalog found or failed to load.', e);
+          this.poisonCatalog = [];
+        }
+      }
+      
+      
+      
 
     setupEventListeners() {
         // Owner management
@@ -45,8 +98,23 @@ class PetManagementApp {
         document.getElementById('setGoalBtn').addEventListener('click', () => this.setWeightGoal());
         
         // Meal tracking
+       // Meal tracking
         document.getElementById('addMealBtn').addEventListener('click', () => this.addMeal());
-        document.getElementById('addFoodBtn').addEventListener('click', () => this.addFoodByWeight());
+        {
+        const checkBtn = document.getElementById('checkFoodBtn');
+        if (checkBtn) {
+            checkBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[click] checkFoodBtn'); // debug
+            this.checkFood();
+            });
+        } else {
+            console.warn('⚠ #checkFoodBtn not found in DOM at setupEventListeners()');
+        }
+        }
+        document.getElementById('addBrandBtn')?.addEventListener('click', () => this.addBrandToCatalog());
+        document.getElementById('addFoodBtn')?.addEventListener('click', () => this.addFoodByWeight());
+
         document.getElementById('setCalorieGoalBtn').addEventListener('click', () => this.setCalorieGoal());
     }
 
@@ -199,54 +267,138 @@ class PetManagementApp {
     }
 
     addMeal() {
-        if (!this.currentPet) {
-            this.showMessage('Please select a pet first', 'error');
-            return;
-        }
-        
+        if (!this.currentPet) return this.showMessage('Please select a pet first', 'error');
+      
         const name = document.getElementById('mealName').value.trim();
         const calories = parseFloat(document.getElementById('mealCalories').value);
-        
-        if (!name || isNaN(calories) || calories <= 0) {
-            this.showMessage('Please enter valid meal name and calories', 'error');
-            return;
+      
+        if (!name || isNaN(calories) || calories <= 0)
+          return this.showMessage('Please enter valid meal name and calories', 'error');
+      
+        // toxic check
+        const species = (this.currentPet.species || 'dog').toLowerCase();
+        const toxic = this.isToxicFor(name, species);
+        if (toxic) {
+          const msg = `⚠ "${name}" is flagged for ${species} — ${toxic.severity.toUpperCase()}.
+      Toxins: ${toxic.toxins.join(', ')}
+      Symptoms: ${toxic.symptoms.join(', ')}
+      ${toxic.dose_notes || ''}
+      
+      Add anyway?`;
+          if (!confirm(msg)) return;
         }
-        
+      
         this.currentPet.addMeal(name, calories);
         this.showMessage(`Added meal: ${name} (${calories} calories)`, 'success');
         document.getElementById('mealName').value = '';
         document.getElementById('mealCalories').value = '';
         this.updateUI();
-    }
+      }
+      
 
-    addFoodByWeight() {
-        if (!this.currentPet) {
-            this.showMessage('Please select a pet first', 'error');
-            return;
-        }
-        
+    isToxicFor(query, species) {
+        if (!query) return null;
+        const q = query.toLowerCase();
+        const sp = (species || '').toLowerCase();
+        const hit = this.poisonCatalog.find(item =>
+          (!sp || item.species.includes(sp)) &&
+          (item.names.includes(q) || item.names.some(n => q.includes(n)))
+        );
+        return hit || null;
+      }
+      
+
+      addFoodByWeight() {
+        if (!this.currentPet) return this.showMessage('Please select a pet first', 'error');
+      
         const foodId = document.getElementById('foodSelect').value;
         const grams = parseFloat(document.getElementById('foodGrams').value);
-        
-        if (!foodId || isNaN(grams) || grams <= 0) {
-            this.showMessage('Please select a food and enter valid grams', 'error');
-            return;
-        }
-        
+      
+        if (!foodId || isNaN(grams) || grams <= 0)
+          return this.showMessage('Please select a food and enter valid grams', 'error');
+      
         const food = this.foodCatalog.find(f => f.id === foodId);
-        if (!food) {
-            this.showMessage('Food not found', 'error');
-            return;
+        if (!food) return this.showMessage('Food not found', 'error');
+      
+        // toxic check by food name
+        const species = (this.currentPet.species || 'dog').toLowerCase();
+        const toxic = this.isToxicFor(food.name, species);
+        if (toxic) {
+          const msg = `⚠ "${food.name}" is flagged for ${species} — ${toxic.severity.toUpperCase()}.
+      Toxins: ${toxic.toxins.join(', ')}
+      Symptoms: ${toxic.symptoms.join(', ')}
+      ${toxic.dose_notes || ''}
+      
+      Add anyway?`;
+          if (!confirm(msg)) return;
         }
-        
+      
         const calories = Math.round(food.caloriesPerGram * grams);
         const mealName = `${food.name} (${grams}g)`;
-        
         this.currentPet.addMeal(mealName, calories);
-        this.showMessage(`Added food: ${mealName} (${calories} calories)`, 'success');
+      
+        this.showMessage(`Added food: ${mealName} (${calories} cal)`, 'success');
         document.getElementById('foodGrams').value = '';
         this.updateUI();
-    }
+      }
+      
+      checkFood() {
+        console.log('[run] checkFood()');
+        const q = document.getElementById('toxicQuery')?.value?.trim();
+        if (!q) return this.showMessage('Enter a food to check', 'error');
+      
+        const species = (this.currentPet?.species || '').toLowerCase();
+        const hit = this.isToxicFor(q, species);
+        if (!hit) {
+          return this.showMessage(`"${q}" not found in toxic list${species ? ` for ${species}` : ''}.`, 'success');
+        }
+        const details = [
+          `Toxins: ${hit.toxins.join(', ')}`,
+          `Symptoms: ${hit.symptoms.join(', ')}`,
+          hit.dose_notes ? `Dose: ${hit.dose_notes}` : null
+        ].filter(Boolean).join(' — ');
+        this.showMessage(`☠ ${q} is DANGEROUS for ${species || hit.species.join('/')} — ${hit.severity.toUpperCase()}. ${details}`, 'error');
+      }
+      
+
+      addBrandToCatalog() {
+        const name = document.getElementById('brandName').value.trim();
+        const type = document.getElementById('brandType').value;
+        const cpg = parseFloat(document.getElementById('brandCalsPerGram').value);
+        const desc = document.getElementById('brandDesc').value.trim();
+      
+        if (!name || !Number.isFinite(cpg) || cpg <= 0) {
+          return this.showMessage('Enter a name and valid calories per gram', 'error');
+        }
+      
+        const id = name.toLowerCase().replace(/\s+/g, '-');
+      
+        // load, upsert, save
+        const userJson = localStorage.getItem(this.userFoodsKey);
+        const list = userJson ? JSON.parse(userJson) : [];
+        const idx = list.findIndex(f => (f.id || '').toLowerCase() === id);
+        const entry = { id, name, type, caloriesPerGram: cpg, description: desc };
+      
+        if (idx >= 0) list[idx] = entry;
+        else list.push(entry);
+      
+        localStorage.setItem(this.userFoodsKey, JSON.stringify(list));
+      
+        // merge into in-memory catalog (override id)
+        const pos = this.foodCatalog.findIndex(f => f.id === id);
+        if (pos >= 0) this.foodCatalog[pos] = entry;
+        else this.foodCatalog.push(entry);
+      
+        this.populateFoodSelect();
+        this.showMessage(`Added to your catalog: ${name} (${cpg} cal/g)`, 'success');
+      
+        // clear inputs
+        document.getElementById('brandName').value = '';
+        document.getElementById('brandCalsPerGram').value = '';
+        document.getElementById('brandDesc').value = '';
+      }
+      
+      
 
     setCalorieGoal() {
         if (!this.currentPet) {
@@ -281,14 +433,22 @@ class PetManagementApp {
     populateFoodSelect() {
         const select = document.getElementById('foodSelect');
         select.innerHTML = '<option value="">Select a food...</option>';
-        
-        this.foodCatalog.forEach(food => {
+      
+        // Load user list to tag
+        const userJson = localStorage.getItem(this.userFoodsKey);
+        const userIds = new Set((userJson ? JSON.parse(userJson) : []).map(f => f.id));
+      
+        // Simple sort by name
+        [...this.foodCatalog].sort((a,b) => a.name.localeCompare(b.name))
+          .forEach(food => {
             const option = document.createElement('option');
             option.value = food.id;
-            option.textContent = `${food.name} (${food.caloriesPerGram} cal/g)`;
+            const star = userIds.has(food.id) ? '★ ' : '';
+            option.textContent = `${star}${food.name} (${food.caloriesPerGram} cal/g)`;
             select.appendChild(option);
-        });
-    }
+          });
+      }
+      
 
     updateUI() {
         this.updateOwnerSection();
