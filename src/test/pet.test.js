@@ -14,7 +14,7 @@ describe('Pet', () => {
     expect(p.goalStatus()).toBe('ABOVE');
 
     // add new weight near goal (within 0.5 lb tolerance)
-    p.addWeight(28.4, { date: '2025-10-04T12:00:00Z', note: 'check' });
+    p.addWeight(28.4, { date: '2026-10-04T12:00:00Z', note: 'check' });
     expect(p.goalStatus()).toBe('MET');
   });
 
