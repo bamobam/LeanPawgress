@@ -53,6 +53,7 @@ npm run console
 
 ### Pet Management
 - `createpet <name> [species] [sex] [age] [startWeight]` - Create a new pet
+- `editpet <name> <property> <new-value>` - Edit pet information (name, species, sex, age, photo)
 - `listpets` - List all pets for current owner
 - `selectpet <name>` - Select a pet to work with
 - `currentpet` - Show current pet info
@@ -64,7 +65,11 @@ npm run console
 - `setweightgoal <weight>` - Set goal weight
 
 ### Meal Tracking
-- `addmeal <name> <calories>` - Add meal entry
+- `addmeal <name> <calories>` - Add meal entry with manual calories
+- `addmealbyweight <food-name> <grams>` - Add food by weight (auto-calculates calories)
+- `addfoodbrand <name> <type> <caloriesPerGram> [description]` - Add new food to catalog
+- `searchfood <search-term>` - Search for foods in catalog
+- `listfoods [type]` - List foods by type (natural/vegetable/fruit/grain/dairy/kibble/wet/treat/all)
 - `meals [date]` - Show meals for specific day
 - `mealshistory [date]` - Show meal entries for specific date
 - `setcaloriegoal <calories>` - Set daily calorie goal
@@ -95,6 +100,10 @@ pet> createpet Buddy dog male 3 45
    Species: dog, Sex: male, Age: 3 years
    Starting weight: 45 lbs
 
+pet> editpet Buddy species cat
+✅ Updated pet "Buddy":
+   species: dog → cat
+
 pet> setweightgoal 40
 ✅ Set goal weight: 40 lbs
 
@@ -106,13 +115,27 @@ pet> addweight 44.5 weekly check
    Note: weekly check
    Date: 1/15/2025
 
-pet> addmeal kibble 300
-✅ Added meal: kibble (300 calories)
+pet> searchfood egg
+🔍 Food Search Results for "egg":
+   1. egg
+      1.55 cal/g - natural - Raw chicken egg
+
+pet> addmealbyweight egg 20
+✅ Added food: egg (20g)
+   Calories: 31 (1.55 per gram)
    Date: 1/15/2025
 
-pet> addmeal chicken 200
-✅ Added meal: chicken (200 calories)
+pet> addmealbyweight chicken breast 50
+✅ Added food: chicken breast (50g)
+   Calories: 83 (1.65 per gram)
    Date: 1/15/2025
+
+pet> addfoodbrand "liver" "natural" 1.35 "Cooked chicken liver"
+✅ Added food to catalog:
+   Name: liver
+   Type: natural
+   Calories per gram: 1.35
+   Description: Cooked chicken liver
 
 pet> status
 📊 Status for Buddy:

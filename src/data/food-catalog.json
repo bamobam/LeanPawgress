@@ -1,0 +1,193 @@
+{
+  "foods": [
+    {
+      "id": "egg",
+      "name": "egg",
+      "type": "natural",
+      "caloriesPerGram": 1.55,
+      "description": "Raw chicken egg"
+    },
+    {
+      "id": "chicken-breast",
+      "name": "chicken breast",
+      "type": "natural",
+      "caloriesPerGram": 1.65,
+      "description": "Cooked chicken breast (no skin)"
+    },
+    {
+      "id": "salmon",
+      "name": "salmon",
+      "type": "natural",
+      "caloriesPerGram": 2.08,
+      "description": "Cooked salmon fillet"
+    },
+    {
+      "id": "beef",
+      "name": "beef",
+      "type": "natural",
+      "caloriesPerGram": 2.5,
+      "description": "Cooked lean beef"
+    },
+    {
+      "id": "carrot",
+      "name": "carrot",
+      "type": "vegetable",
+      "caloriesPerGram": 0.41,
+      "description": "Raw carrot"
+    },
+    {
+      "id": "sweet-potato",
+      "name": "sweet potato",
+      "type": "vegetable",
+      "caloriesPerGram": 0.86,
+      "description": "Cooked sweet potato"
+    },
+    {
+      "id": "green-beans",
+      "name": "green beans",
+      "type": "vegetable",
+      "caloriesPerGram": 0.31,
+      "description": "Cooked green beans"
+    },
+    {
+      "id": "blueberries",
+      "name": "blueberries",
+      "type": "fruit",
+      "caloriesPerGram": 0.57,
+      "description": "Fresh blueberries"
+    },
+    {
+      "id": "apple",
+      "name": "apple",
+      "type": "fruit",
+      "caloriesPerGram": 0.52,
+      "description": "Raw apple (without core)"
+    },
+    {
+      "id": "banana",
+      "name": "banana",
+      "type": "fruit",
+      "caloriesPerGram": 0.89,
+      "description": "Raw banana"
+    },
+    {
+      "id": "rice",
+      "name": "rice",
+      "type": "grain",
+      "caloriesPerGram": 1.3,
+      "description": "Cooked white rice"
+    },
+    {
+      "id": "oats",
+      "name": "oats",
+      "type": "grain",
+      "caloriesPerGram": 3.89,
+      "description": "Dry rolled oats"
+    },
+    {
+      "id": "pumpkin",
+      "name": "pumpkin",
+      "type": "vegetable",
+      "caloriesPerGram": 0.26,
+      "description": "Cooked pumpkin puree"
+    },
+    {
+      "id": "yogurt",
+      "name": "yogurt",
+      "type": "dairy",
+      "caloriesPerGram": 0.59,
+      "description": "Plain Greek yogurt"
+    },
+    {
+      "id": "cheese",
+      "name": "cheese",
+      "type": "dairy",
+      "caloriesPerGram": 4,
+      "description": "Cheddar cheese"
+    },
+    {
+      "id": "peanut-butter",
+      "name": "peanut butter",
+      "type": "natural",
+      "caloriesPerGram": 5.88,
+      "description": "Natural peanut butter (no sugar)"
+    },
+    {
+      "id": "liver",
+      "name": "liver",
+      "type": "natural",
+      "caloriesPerGram": 1.35,
+      "description": "Cooked chicken liver"
+    },
+    {
+      "id": "kibble-hills",
+      "name": "hills kibble",
+      "type": "kibble",
+      "caloriesPerGram": 3.4,
+      "description": "Hill's Science Diet dry food"
+    },
+    {
+      "id": "kibble-royal-canin",
+      "name": "royal canin kibble",
+      "type": "kibble",
+      "caloriesPerGram": 3.6,
+      "description": "Royal Canin dry food"
+    },
+    {
+      "id": "wet-food",
+      "name": "wet food",
+      "type": "wet",
+      "caloriesPerGram": 1,
+      "description": "Canned wet food"
+    },
+    {
+      "id": "treats",
+      "name": "treats",
+      "type": "treat",
+      "caloriesPerGram": 3.5,
+      "description": "Dog training treats"
+    },
+    {
+      "id": "bone",
+      "name": "bone",
+      "type": "natural",
+      "caloriesPerGram": 0,
+      "description": "Raw bone (no calories)"
+    },
+    {
+      "id": "broccoli",
+      "name": "broccoli",
+      "type": "vegetable",
+      "caloriesPerGram": 0.34,
+      "description": "Cooked broccoli"
+    },
+    {
+      "id": "spinach",
+      "name": "spinach",
+      "type": "vegetable",
+      "caloriesPerGram": 0.23,
+      "description": "Raw spinach"
+    },
+    {
+      "id": "coconut-oil",
+      "name": "coconut oil",
+      "type": "natural",
+      "caloriesPerGram": 8.6,
+      "description": "Virgin coconut oil"
+    },
+    {
+      "id": "fromm-chicken-a-la-veg",
+      "name": "fromm-chicken-a-la-veg",
+      "type": "kibble",
+      "caloriesPerGram": 3.894,
+      "description": "cat food"
+    },
+    {
+      "id": "water",
+      "name": "water",
+      "type": "wet",
+      "caloriesPerGram": 0,
+      "description": "drink"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+    "items": [
+      {
+        "id": "chocolate",
+        "names": ["chocolate", "cacao", "cocoa", "dark chocolate", "baking chocolate", "milk chocolate"],
+        "species": ["dog", "cat"],
+        "toxins": ["theobromine", "caffeine (methylxanthines)"],
+        "severity": "high",
+        "symptoms": ["vomiting", "diarrhea", "restlessness", "tremors", "abnormal heart rhythm", "seizures"],
+        "dose_notes": "Mild signs ≥ ~20 mg/kg methylxanthines; cardiotoxic 40–50 mg/kg; seizures ≥ 60 mg/kg. Dark/baking chocolate = much higher risk.",
+        "refs": ["merck_choc"]
+      },
+      {
+        "id": "xylitol",
+        "names": ["xylitol", "sugar-free gum", "sugar-free candy", "birch sugar"],
+        "species": ["dog"],
+        "toxins": ["xylitol"],
+        "severity": "high",
+        "symptoms": ["rapid hypoglycemia", "vomiting", "weakness", "collapse", "liver failure (severe cases)"],
+        "dose_notes": "Hypoglycemia > ~100 mg/kg; risk of liver failure > ~500 mg/kg.",
+        "refs": ["merck_xylitol"]
+      },
+      {
+        "id": "grapes-raisins-currants",
+        "names": ["grape", "grapes", "raisin", "raisins", "currants", "sultanas"],
+        "species": ["dog"],
+        "toxins": ["tartaric acid (suspected)"],
+        "severity": "high",
+        "symptoms": ["vomiting", "diarrhea", "lethargy", "acute kidney injury"],
+        "dose_notes": "Risk may start as low as 1 grape per ~4.5 kg (10 lb). Published lows include ~19.6 g/kg grapes and ~2.8 g/kg raisins; variability is high → treat any exposure as an emergency.",
+        "refs": ["merck_grapes", "vetgirl_grapes", "vettimes_grapes"]
+      },
+      {
+        "id": "allium-onion-garlic",
+        "names": ["onion", "garlic", "leek", "chive", "shallot", "onion powder", "garlic powder"],
+        "species": ["dog", "cat"],
+        "toxins": ["N-propyl disulfide and other thiosulfates"],
+        "severity": "high",
+        "symptoms": ["vomiting", "lethargy", "pale gums", "tachycardia", "Heinz body hemolytic anemia (delayed)"],
+        "dose_notes": "Cats ~5 g/kg onion; dogs ~15–30 g/kg can cause clinically important hematologic changes. Powders are concentrated.",
+        "refs": ["msd_allium", "onion_dose_2025"]
+      },
+      {
+        "id": "macadamia-nuts",
+        "names": ["macadamia", "macadamia nuts"],
+        "species": ["dog"],
+        "toxins": ["unknown"],
+        "severity": "moderate",
+        "symptoms": ["hindlimb weakness", "depression", "vomiting", "tremors", "hyperthermia"],
+        "dose_notes": "Usually self-limiting within 24–48h; still contact a vet.",
+        "refs": ["merck_macadamia", "vca_macadamia"]
+      },
+      {
+        "id": "alcohol",
+        "names": ["alcohol", "ethanol", "beer", "wine", "liquor"],
+        "species": ["dog", "cat"],
+        "toxins": ["ethanol"],
+        "severity": "high",
+        "symptoms": ["CNS depression", "hypoglycemia", "hypothermia", "vomiting", "ataxia"],
+        "dose_notes": "Any significant ingestion is dangerous. Raw bread dough creates ethanol in the stomach → same risk.",
+        "refs": ["fda_dangers", "merck_bread"]
+      },
+      {
+        "id": "raw-bread-dough",
+        "names": ["raw dough", "bread dough", "yeast dough"],
+        "species": ["dog", "cat"],
+        "toxins": ["ethanol (fermentation)", "gastric dilatation/obstruction risk"],
+        "severity": "high",
+        "symptoms": ["bloat", "vomiting or retching", "staggering", "depression", "hypothermia"],
+        "dose_notes": "Ferments and expands in stomach; produces ethanol → alcohol poisoning.",
+        "refs": ["merck_bread", "aspca_bread"]
+      },
+      {
+        "id": "caffeine",
+        "names": ["coffee", "espresso", "grounds", "tea", "energy drink", "yerba mate"],
+        "species": ["dog", "cat"],
+        "toxins": ["caffeine (methylxanthine)"],
+        "severity": "moderate",
+        "symptoms": ["restlessness", "vomiting", "tachycardia", "tremors", "seizures (high doses)"],
+        "dose_notes": "Same methylxanthine class as chocolate; dose-response similar.",
+        "refs": ["fda_dangers", "merck_choc"]
+      },
+      {
+        "id": "hops",
+        "names": ["hops", "spent hops", "hop pellets", "hop plugs"],
+        "species": ["dog"],
+        "toxins": ["unknown (suspected essential oils/resins)"],
+        "severity": "high",
+        "symptoms": ["vomiting", "tachypnea", "malignant hyperthermia", "collapse"],
+        "dose_notes": "Homebrewing waste is risky; immediate vet care if ingested.",
+        "refs": ["pph_hops", "pubmed_hops"]
+      },
+      {
+        "id": "avocado",
+        "names": ["avocado", "guacamole", "persin"],
+        "species": ["dog", "cat"],
+        "toxins": ["persin"],
+        "severity": "low-to-moderate",
+        "symptoms": ["GI upset; pit/obstruction hazard"],
+        "dose_notes": "Dogs/cats usually only mild toxicity; birds/ruminants much more sensitive.",
+        "refs": ["fda_dangers"]
+      },
+      {
+        "id": "salted-fatty-moldy-foods",
+        "names": ["very salty foods", "moldy food", "rinds", "drippings"],
+        "species": ["dog", "cat"],
+        "toxins": ["sodium ion (salt), mycotoxins, pancreatitis risk from high fat"],
+        "severity": "moderate",
+        "symptoms": ["vomiting", "diarrhea", "tremors (moldy)", "pancreatitis (fatty)"],
+        "dose_notes": "Avoid—frequent source of ER visits.",
+        "refs": ["fda_dangers"]
+      }
+    ],
+    "refs": {
+      "merck_choc": "Merck Vet Manual – Chocolate Toxicosis thresholds",
+      "merck_xylitol": "Merck Vet Manual – Xylitol Toxicosis doses",
+      "msd_allium": "Merck/MSD Vet Manual – Allium toxicosis",
+      "onion_dose_2025": "Springer 2025 – cat 5 g/kg; dog 15–30 g/kg onions",
+      "merck_grapes": "Merck Vet Manual – Grapes/raisins (tartaric acid; risk even at 1 grape/10 lb)",
+      "vetgirl_grapes": "VetGirl – dose ranges and management",
+      "vettimes_grapes": "VetTimes 2024 – lowest reported doses (19.6 g/kg grapes; 2.8 g/kg raisins)",
+      "merck_macadamia": "Merck Vet Manual – Macadamia nut toxicosis (dogs)",
+      "vca_macadamia": "VCA – clinical signs & course",
+      "fda_dangers": "US FDA – Potentially Dangerous Items for Your Pet",
+      "merck_bread": "Merck Vet Manual – Bread dough (ethanol) toxicosis",
+      "aspca_bread": "ASPCApro – Dough/ethanol advisory",
+      "pph_hops": "Pet Poison Helpline – Hops",
+      "pubmed_hops": "PubMed 2023 retrospective on hops ingestion"
+    }
+  }
+  

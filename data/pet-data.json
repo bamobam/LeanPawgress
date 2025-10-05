@@ -1,0 +1,90 @@
+{
+  "owners": [
+    {
+      "id": "005cda09-64e2-451f-9a2f-0f28e9aa5e77",
+      "name": "grace",
+      "email": null,
+      "pets": [
+        {
+          "id": "9d0f9d0b-1225-4c8d-a482-7adc602feb07",
+          "name": "bao",
+          "species": "cat",
+          "sex": "unknown",
+          "ageYears": 0,
+          "photoUrl": null,
+          "goalWeightLb": 15,
+          "dailyCalorieGoal": null,
+          "weightLog": [
+            {
+              "id": "30f72bb6-006b-4686-898a-30207b2bc322",
+              "pounds": 18,
+              "date": "2025-10-05T02:51:06.909Z",
+              "note": "",
+              "imageUrl": null
+            },
+            {
+              "id": "af1ad2c9-e9b3-465f-b73b-0e2ff61de366",
+              "pounds": 17.5,
+              "date": "2025-10-05T02:55:29.803Z",
+              "note": "",
+              "imageUrl": null
+            },
+            {
+              "id": "b39122db-3883-46cd-bd01-ee2d5c8505ef",
+              "pounds": 17.5,
+              "date": "2025-10-05T02:55:31.985Z",
+              "note": "",
+              "imageUrl": null
+            }
+          ],
+          "meals": [
+            {
+              "id": "d2d2be9c-d5da-4b2f-8beb-6cfe74d43af6",
+              "name": "banana",
+              "calories": 100,
+              "date": "2025-10-05T02:51:37.594Z"
+            },
+            {
+              "id": "b5e7c9d2-0f1a-4a06-96a1-b29d3389d3af",
+              "name": "kibble",
+              "calories": 100,
+              "date": "2025-10-05T02:54:49.760Z"
+            },
+            {
+              "id": "0a5d4473-4c4e-40f3-a05b-38f349c2284a",
+              "name": "egg (20g)",
+              "calories": 31,
+              "date": "2025-10-05T03:01:01.440Z"
+            },
+            {
+              "id": "c981d4f7-cfa4-4812-9966-14bf7d9d39ec",
+              "name": "fromm-chicken-a-la-veg",
+              "calories": 100,
+              "date": "2025-10-05T03:07:53.725Z"
+            },
+            {
+              "id": "76e221ed-1d75-40d5-b0a3-9fc38faf08e6",
+              "name": "water (100g)",
+              "calories": 0,
+              "date": "2025-10-05T03:10:11.329Z"
+            }
+          ]
+        },
+        {
+          "id": "90dbc183-fa25-429a-a124-b3b0c41ccb66",
+          "name": "mao",
+          "species": "cat",
+          "sex": "male",
+          "ageYears": 0,
+          "photoUrl": null,
+          "goalWeightLb": null,
+          "dailyCalorieGoal": null,
+          "weightLog": [],
+          "meals": []
+        }
+      ]
+    }
+  ],
+  "currentOwnerName": "grace",
+  "currentPetName": "bao"
+}

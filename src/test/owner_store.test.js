@@ -1,7 +1,7 @@
 // src/test/owner_store.test.js
 import { describe, it, beforeEach, expect } from 'vitest';
 import { Owner } from '../model/Owner.js';
-import { Pet } from '../model/Pet.js';
+import { Pet } from '../model/pet.js';
 import { loadOwners, saveOwners } from '../persistence/store.js';
 
 describe('Owner + store', () => {

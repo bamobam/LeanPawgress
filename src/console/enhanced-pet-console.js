@@ -11,14 +11,100 @@ class EnhancedPetConsole {
     this.owners = new Map(); // Store owners by name
     this.currentOwner = null;
     this.currentPet = null;
+    this.foodCatalog = []; // Store food catalog
+    this.poisonCatalog = []; // Store poisonous food catalog
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
       prompt: 'pet> '
     });
 
+    this.loadFoodCatalog();
+    this.loadPoisonCatalog();
     this.setupEventHandlers();
     this.showWelcome();
+  }
+
+  loadFoodCatalog() {
+    try {
+      const catalogPath = path.join(process.cwd(), 'src', 'data', 'food-catalog.json');
+      if (!fs.existsSync(catalogPath)) {
+        console.log('⚠️ Food catalog not found. Food features will be limited.');
+        this.foodCatalog = [];
+        return;
+      }
+  
+      const raw = fs.readFileSync(catalogPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      const foods = Array.isArray(parsed.foods) ? parsed.foods : [];
+  
+      const warn = (msg) => console.log('⚠️', msg);
+  
+      this.foodCatalog = foods
+        .map((f, idx) => {
+          const name = (f.name || '').trim();
+          if (!name) { warn(`foods[${idx}] missing name — skipped`); return null; }
+  
+          // derive/normalize calories per gram
+          let cpg = f.caloriesPerGram;
+          if (cpg == null && f.kcalPerKg != null) cpg = Number(f.kcalPerKg) / 1000;
+          cpg = Number(cpg);
+  
+          if (!Number.isFinite(cpg) || cpg <= 0) {
+            warn(`"${name}" has invalid caloriesPerGram (${f.caloriesPerGram ?? f.kcalPerKg}) — skipped`);
+            return null;
+          }
+  
+          const id = (f.id || name.toLowerCase().replace(/\s+/g, '-')).trim();
+          const type = (f.type || 'unknown').toLowerCase();
+  
+          return {
+            id,
+            name,
+            type,
+            caloriesPerGram: cpg,
+            description: f.description || ''
+          };
+        })
+        .filter(Boolean);
+  
+      console.log(`📚 Loaded ${this.foodCatalog.length} food items from catalog`);
+    } catch (error) {
+      console.log('⚠️ Failed to load food catalog:', error.message);
+      this.foodCatalog = [];
+    }
+  }
+  
+
+  loadPoisonCatalog() {
+    try {
+      const p = path.join(process.cwd(), 'src', 'data', 'poisons.json');
+      if (fs.existsSync(p)) {
+        const txt = fs.readFileSync(p, 'utf8');
+        const j = JSON.parse(txt);
+        this.poisonCatalog = (j.items || []).map(x => ({
+          ...x,
+          names: (x.names || []).map(n => n.toLowerCase())
+        }));
+        console.log(`☠️  Loaded ${this.poisonCatalog.length} toxic foods`);
+      } else {
+        console.log('⚠️ Toxic food catalog not found (src/data/poisons.json).');
+      }
+    } catch (e) {
+      console.log('⚠️ Failed to load toxic catalog:', e.message);
+    }
+}
+
+  saveFoodCatalog() {
+    try {
+      const catalogPath = path.join(process.cwd(), 'src', 'data', 'food-catalog.json');
+      const catalog = {
+        foods: this.foodCatalog
+      };
+      fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2));
+    } catch (error) {
+      console.log('⚠️ Failed to save food catalog:', error.message);
+    }
   }
 
   setupEventHandlers() {
@@ -66,6 +152,9 @@ class EnhancedPetConsole {
         case 'createpet':
           this.createPet(args);
           break;
+        case 'editpet':
+          this.editPet(args);
+          break;
         case 'listpets':
           this.listPets();
           break;
@@ -80,6 +169,18 @@ class EnhancedPetConsole {
           break;
         case 'addmeal':
           this.addMeal(args);
+          break;
+        case 'addmealbyweight':
+          this.addMealByWeight(args);
+          break;
+        case 'addfoodbrand':
+          this.addFoodBrand(args);
+          break;
+        case 'searchfood':
+          this.searchFood(args);
+          break;
+        case 'listfoods':
+          this.listFoods(args);
           break;
         case 'setweightgoal':
           this.setGoal(args);
@@ -98,6 +199,9 @@ class EnhancedPetConsole {
           break;
         case 'meals':
           this.showMeals(args);
+          break;
+        case 'checkfood':
+          this.cmdCheckFood(args);
           break;
         case 'weightshistory':
           this.showWeightsHistory(args);
@@ -143,6 +247,7 @@ class EnhancedPetConsole {
     
     console.log('\n🐾 Pet Management:');
     console.log('  createpet <name> [species] [sex] [age] [startWeight] - Create a new pet');
+    console.log('  editpet <name> <property> <new-value>   - Edit pet information');
     console.log('  listpets                                - List all pets for current owner');
     console.log('  selectpet <name>                        - Select a pet');
     console.log('  currentpet                              - Show current pet info');
@@ -155,6 +260,10 @@ class EnhancedPetConsole {
     
     console.log('\n🍽️ Meal Tracking:');
     console.log('  addmeal <name> <calories>               - Add meal entry');
+    console.log('  addmealbyweight <food-name> <grams>     - Add food by weight (auto-calculates calories)');
+    console.log('  addfoodbrand <name> <type> <caloriesPerGram> [description] - Add new food to catalog');
+    console.log('  searchfood <search-term>               - Search for foods in catalog');
+    console.log('  listfoods [type]                       - List foods by type (natural/vegetable/fruit/grain/dairy/kibble/wet/treat/all)');
     console.log('  meals [date]                            - Show meals for day');
     console.log('  mealshistory [date]                     - Show meal entries for specific date');
     console.log('  setcaloriegoal <calories>               - Set daily calorie goal');
@@ -286,6 +395,101 @@ class EnhancedPetConsole {
     }
   }
 
+  editPet(args) {
+    if (!this.currentOwner) {
+      console.log('❌ No owner selected. Create or select an owner first.');
+      return;
+    }
+
+    if (args.length < 2) {
+      console.log('❌ Usage: editpet <pet-name> <property> <new-value>');
+      console.log('   Properties: name, species, sex, age, photo');
+      console.log('   Examples:');
+      console.log('     editpet Bao species cat');
+      console.log('     editpet Bao sex female');
+      console.log('     editpet Bao age 5');
+      console.log('     editpet Bao name Mochi');
+      console.log('     editpet Bao photo https://example.com/photo.jpg');
+      return;
+    }
+
+    const petName = args[0];
+    const property = args[1].toLowerCase();
+    const newValue = args.slice(2).join(' ');
+
+    // Find the pet
+    const pet = this.currentOwner.pets.find(p => p.name === petName);
+    if (!pet) {
+      console.log(`❌ Pet "${petName}" not found for owner "${this.currentOwner.name}"`);
+      return;
+    }
+
+    // Validate property
+    const validProperties = ['name', 'species', 'sex', 'age', 'photo'];
+    if (!validProperties.includes(property)) {
+      console.log(`❌ Invalid property. Must be one of: ${validProperties.join(', ')}`);
+      return;
+    }
+
+    // Validate new value based on property
+    if (!newValue) {
+      console.log(`❌ New value cannot be empty`);
+      return;
+    }
+
+    let oldValue;
+    switch (property) {
+      case 'name':
+        // Check if new name already exists
+        const existingPet = this.currentOwner.pets.find(p => p.name === newValue && p !== pet);
+        if (existingPet) {
+          console.log(`❌ Pet name "${newValue}" already exists for owner "${this.currentOwner.name}"`);
+          return;
+        }
+        oldValue = pet.name;
+        pet.name = newValue;
+        break;
+      
+      case 'species':
+        oldValue = pet.species;
+        pet.species = newValue;
+        break;
+      
+      case 'sex':
+        const validSex = ['male', 'female', 'unknown'];
+        if (!validSex.includes(newValue.toLowerCase())) {
+          console.log(`❌ Invalid sex. Must be one of: ${validSex.join(', ')}`);
+          return;
+        }
+        oldValue = pet.sex;
+        pet.sex = newValue.toLowerCase();
+        break;
+      
+      case 'age':
+        const age = Number(newValue);
+        if (isNaN(age) || age < 0) {
+          console.log(`❌ Age must be a non-negative number, got: ${newValue}`);
+          return;
+        }
+        oldValue = pet.ageYears;
+        pet.ageYears = age;
+        break;
+      
+      case 'photo':
+        oldValue = pet.photoUrl;
+        pet.photoUrl = newValue;
+        break;
+    }
+
+    console.log(`✅ Updated pet "${petName}":`);
+    console.log(`   ${property}: ${oldValue} → ${newValue}`);
+
+    // If we changed the name, update current pet selection
+    if (property === 'name' && this.currentPet === pet) {
+      this.currentPet = pet;
+    }
+  }
+
   listPets() {
     if (!this.currentOwner) {
       console.log('❌ No owner selected');
@@ -381,9 +585,178 @@ class EnhancedPetConsole {
     const name = args[0];
     const calories = Number(args[1]);
 
+    const species = (this.currentPet?.species || 'dog').toLowerCase();
+    const toxic = this.isToxicFor(name /* or food.name */, species);
+    if (toxic) {
+        console.log(`☠️  WARNING: "${name}" is toxic for ${species} (${toxic.severity}). ${toxic.dose_notes || ''}`);
+        console.log('    Use "--force" at the end of the command to log anyway (for testing).');
+    if (args.at(-1) !== '--force') return;
+    else args.pop(); // strip flag
+    }
+
     const meal = this.currentPet.addMeal(name, calories);
     console.log(`✅ Added meal: ${name} (${calories} calories)`);
     console.log(`   Date: ${meal.date.toLocaleDateString()}`);
+  }
+
+  addMealByWeight(args) {
+    if (!this.currentPet) {
+      console.log('❌ No pet selected');
+      return;
+    }
+
+    if (args.length < 2) {
+      console.log('❌ Usage: addmealbyweight <food-name> <grams>');
+      console.log('   Examples:');
+      console.log('     addmealbyweight egg 20');
+      console.log('     addmealbyweight chicken breast 50');
+      console.log('     addmealbyweight kibble 100');
+      console.log('   Use "searchfood" to find available foods');
+      return;
+    }
+
+    const foodName = args.slice(0, -1).join(' '); // Everything except last argument
+    const grams = Number(args[args.length - 1]);
+
+    // Validate grams input
+    if (isNaN(grams) || grams <= 0) {
+      console.log(`❌ Grams must be a positive number, got: ${args[args.length - 1]}`);
+      return;
+    }
+
+    // Search for the food in catalog
+    const food = this.foodCatalog.find(f => 
+      f.name.toLowerCase().includes(foodName.toLowerCase())
+    );
+
+    if (!food) {
+      console.log(`❌ Food "${foodName}" not found in catalog`);
+      console.log('   Use "searchfood" to find available foods');
+      return;
+    }
+
+    const species = (this.currentPet?.species || 'dog').toLowerCase();
+    const toxic = this.isToxicFor(args[0] /* or food.name */, species);
+    if (toxic) {
+        console.log(`☠️  WARNING: "${food.name}" is toxic for ${species} (${toxic.severity}). ${toxic.dose_notes || ''}`);
+        console.log('    Use "--force" at the end of the command to log anyway (for testing).');
+        if (args.at(-1) !== '--force') return;    
+        else args.pop(); // strip flag          
+    }
+
+    const calpergram = Math.round(food.caloriesPerGram * grams);
+    const mealName = `${food.name} (${grams}g)`;
+
+    const meal = this.currentPet.addMeal(mealName, calpergram);
+    console.log(`✅ Added food: ${mealName}`);
+    console.log(`   Calories: ${calpergram} (${food.caloriesPerGram} cal/g)`);
+    console.log(`   Date: ${meal.date.toLocaleDateString()}`);
+  }  
+
+  addFoodBrand(args) {
+    if (args.length < 4) {
+      console.log('❌ Usage: addfoodbrand <name> <type> <caloriesPerGram> [description]');
+      console.log('   Example: addfoodbrand "egg" "natural" 1.55 "Raw chicken egg"');
+      return;
+    }
+
+    const name = args[0];
+    const type = args[1];
+    const caloriesPerGram = Number(args[2]);
+    const description = args.slice(3).join(' ') || '';
+
+    // Validate type
+    const validTypes = ['natural', 'vegetable', 'fruit', 'grain', 'dairy', 'kibble', 'wet', 'treat'];
+    if (!validTypes.includes(type)) {
+      console.log(`❌ Invalid food type. Must be one of: ${validTypes.join(', ')}`);
+      return;
+    }
+
+    // Validate calories
+    if (isNaN(caloriesPerGram) || caloriesPerGram < 0) {
+      console.log('❌ Calories per gram must be a non-negative number');
+      return;
+    }
+
+    // Generate unique ID
+    const id = name.toLowerCase().replace(/\s+/g, '-');
+
+    // Check if food already exists
+    const existingFood = this.foodCatalog.find(f => f.id === id);
+    if (existingFood) {
+      console.log(`❌ Food "${name}" already exists in catalog`);
+      return;
+    }
+
+    // Create new food item
+    const newFood = {
+      id,
+      name,
+      type,
+      caloriesPerGram,
+      description
+    };
+
+    // Add to catalog
+    this.foodCatalog.push(newFood);
+
+    // Save to file
+    this.saveFoodCatalog();
+
+    console.log(`✅ Added food to catalog:`);
+    console.log(`   Name: ${name}`);
+    console.log(`   Type: ${type}`);
+    console.log(`   Calories per gram: ${caloriesPerGram}`);
+    if (description) console.log(`   Description: ${description}`);
+  }
+
+  searchFood(args) {
+    if (args.length < 1) {
+      console.log('❌ Usage: searchfood <search-term>');
+      return;
+    }
+
+    const searchTerm = args.join(' ').toLowerCase();
+    const results = this.foodCatalog.filter(food => 
+      food.name.toLowerCase().includes(searchTerm) ||
+      food.description.toLowerCase().includes(searchTerm) ||
+      food.type.toLowerCase().includes(searchTerm)
+    );
+
+    if (results.length === 0) {
+      console.log(`📝 No foods found matching "${searchTerm}"`);
+      return;
+    }
+
+    console.log(`\n🔍 Food Search Results for "${searchTerm}":`);
+    results.slice(0, 10).forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.name}`);
+      console.log(`      ${food.caloriesPerGram} cal/g - ${food.type} - ${food.description}`);
+    });
+
+    if (results.length > 10) {
+      console.log(`   ... and ${results.length - 10} more results`);
+    }
+  }
+
+  listFoods(args) {
+    const type = args[0] || 'all';
+    let foods = this.foodCatalog;
+
+    if (type !== 'all') {
+      foods = this.foodCatalog.filter(food => food.type === type);
+    }
+
+    if (foods.length === 0) {
+      console.log(`📝 No foods found for type: ${type}`);
+      return;
+    }
+
+    console.log(`\n🍽️ Available Foods (${type}):`);
+    foods.forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.name}`);
+      console.log(`      ${food.caloriesPerGram} cal/g - ${food.type}`);
+    });
   }
 
   setGoal(args) {
@@ -516,6 +889,30 @@ class EnhancedPetConsole {
       console.log(`   ${index + 1}. ${entry.pounds} lbs - ${entry.date.toLocaleTimeString()}`);
       if (entry.note) console.log(`      Note: ${entry.note}`);
     });
+  }
+
+  isToxicFor(name, species) {
+    if (!name) return null;
+    const q = name.toLowerCase();
+    const hit = this.poisonCatalog.find(it =>
+      (!species || it.species.includes(species)) &&
+      (it.names.includes(q) || it.names.some(n => q.includes(n)))
+    );
+    return hit || null;
+  }
+
+  cmdCheckFood(args) {
+    if (!args.length) return console.log('❌ Usage: checkfood <name> [dog|cat]');
+    const species = (args.at(-1)?.toLowerCase() === 'dog' || args.at(-1)?.toLowerCase() === 'cat')
+      ? args.pop().toLowerCase()
+      : (this.currentPet?.species?.toLowerCase() || null);
+    const name = args.join(' ');
+    const hit = this.isToxicFor(name, species);
+    if (!hit) return console.log(`✅ "${name}" shows no match in toxic catalog${species ? ` for ${species}` : ''}.`);
+    console.log(`☠️  "${name}" is DANGEROUS for ${species || hit.species.join('/')} — ${hit.severity.toUpperCase()}`);
+    console.log(`   Toxins: ${hit.toxins.join(', ')}`);
+    console.log(`   Symptoms: ${hit.symptoms.join(', ')}`);
+    if (hit.dose_notes) console.log(`   Dose: ${hit.dose_notes}`);
   }
 
   showMealsHistory(args) {
@@ -656,6 +1053,7 @@ class EnhancedPetConsole {
       console.log(`❌ Failed to load data: ${error.message}`);
     }
   }
+  
 
   listFiles() {
     try {
